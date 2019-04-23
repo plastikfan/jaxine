@@ -30,7 +30,9 @@
   },
   "keywords": [
     "xml",
-    "json"
+    "json",
+    "convert",
+    "transform"
   ],
   "author": "plastikfan",
   "license": "ISC",
