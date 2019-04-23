@@ -1,0 +1,83 @@
+{
+  "name": "jaxine",
+  "version": "0.0.1",
+  "description": "Another JSON to XML converter with inheritable attributes and custom element consolidation",
+  "main": "index.js",
+  "scripts": {
+    "clean": "rimraf dist",
+    "t": "mocha ./dist/jaxine-test-bundle.js",
+    "test": "echo 'test tbd ...'",
+    "build": "npm run build:d",
+    "build:d": "webpack -d --env.mode development",
+    "build:p": "webpack -p --env.mode production",
+    "build:t": "webpack --config webpack.config.test.js",
+    "exec": "node ./dist/jaxine-bundle.js",
+    "lint": "npx semistandard --verbose | npx snazzy",
+    "fix": "npx semistandard --fix",
+    "watch": "webpack --watch --env.mode development",
+    "watch:t": "webpack --watch --env.mode development --config webpack.config.test.js",
+    "audit": "npm audit --skip-unused",
+    "dep": "depcheck --ignores 'xpath,webpack-cli,sinon,@commitlint/cli,@commitlint/config-conventional,precommit-hook,shebang-loader,raw-loader'",
+    "check": "npm run audit && npm run dep && npm outdated --depth 0",
+    "validate": "echo 'validate tbd ...'",
+    "cm": "npx git-cz",
+    "rep": "nyc report --reporter=lcov --reporter text summary",
+    "cov": "nyc mocha ./dist/jaxine-test-bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/plastikfan/jaxine.git"
+  },
+  "keywords": [
+    "xml",
+    "json"
+  ],
+  "author": "plastikfan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/plastikfan/jaxine/issues"
+  },
+  "homepage": "https://github.com/plastikfan/jaxine#readme",
+  "dependencies": {
+    "ramda": "^0.26.1",
+    "xmldom": "^0.1.27",
+    "xpath": "0.0.27"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^7.5.2",
+    "@commitlint/config-conventional": "^7.5.0",
+    "chai": "^4.2.0",
+    "commitizen": "^3.0.7",
+    "cz-conventional-changelog": "^2.1.0",
+    "depcheck": "^0.7.2",
+    "dirty-chai": "^2.0.1",
+    "mocha": "^6.1.4",
+    "nyc": "^14.0.0",
+    "precommit-hook": "^3.0.0",
+    "raw-loader": "^2.0.0",
+    "rimraf": "^2.6.3",
+    "semistandard": "*",
+    "shebang-loader": "0.0.1",
+    "sinon": "^7.3.2",
+    "snazzy": "^8.0.0",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.0",
+    "webpack-config-utils": "^2.3.1",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "pre-commit": [
+    "lint",
+    "validate",
+    "test"
+  ],
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "semistandard": {
+    "env": [
+      "mocha"
+    ]
+  }
+}
