@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rimraf dist",
     "t": "mocha ./dist/jaxine-test-bundle.js",
-    "test": "echo 'test tbd ...'",
+    "test": "npm audit --skip-unused && npm run t",
     "build": "npm run build:d",
     "build:d": "webpack -d --env.mode development",
     "build:p": "webpack -p --env.mode production",
@@ -19,7 +19,7 @@
     "audit": "npm audit --skip-unused",
     "dep": "depcheck --ignores 'xpath,webpack-cli,sinon,@commitlint/cli,@commitlint/config-conventional,precommit-hook,shebang-loader,raw-loader'",
     "check": "npm run audit && npm run dep && npm outdated --depth 0",
-    "validate": "echo 'validate tbd ...'",
+    "validate": "npm run lint && npm run build && npm run build:t && npm test",
     "cm": "npx git-cz",
     "rep": "nyc report --reporter=lcov --reporter text summary",
     "cov": "nyc mocha ./dist/jaxine-test-bundle.js"
@@ -49,7 +49,7 @@
     "@commitlint/cli": "^7.5.2",
     "@commitlint/config-conventional": "^7.5.0",
     "chai": "^4.2.0",
-    "commitizen": "^3.0.7",
+    "commitizen": "^3.1.1",
     "cz-conventional-changelog": "^2.1.0",
     "depcheck": "^0.7.2",
     "dirty-chai": "^2.0.1",
@@ -63,7 +63,7 @@
     "sinon": "^7.3.2",
     "snazzy": "^8.0.0",
     "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.0",
+    "webpack-cli": "^3.3.1",
     "webpack-config-utils": "^2.3.1",
     "webpack-node-externals": "^1.7.2"
   },
