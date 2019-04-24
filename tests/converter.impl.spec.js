@@ -13,6 +13,7 @@
 
   const XHelpers = require('./xml-test-helpers');
   const Helpers = require('./test-helpers');
+  const Jaxine = require('../lib/converter');
   const Impl = require('../lib/converter.impl');
 
   const getTestOptions = (el) => {
@@ -40,7 +41,7 @@
 
         if (commandsNode) {
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-          let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+          let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('leaf'),
@@ -73,7 +74,7 @@
 
         if (commandsNode) {
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-          let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+          let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('leaf'),
@@ -106,7 +107,7 @@
           let invalidCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
 
           expect(() => {
-            Impl.buildElement(invalidCommandNode, commandsNode, getTestOptions);
+            Jaxine.buildElement(invalidCommandNode, commandsNode, getTestOptions);
           }).to.throw(Error);
         } else {
           assert.fail('FAILURE! Couldn\'t get Commands node.');
@@ -132,7 +133,7 @@
           let expressionNode = XHelpers.selectElementNodeById(
             'Expression', 'name', 'person\'s-name-expression', expressionsNode) || {};
 
-          let element = Impl.buildElement(expressionNode, expressionsNode, (el) => {
+          let element = Jaxine.buildElement(expressionNode, expressionsNode, (el) => {
             return {
               id: 'name'
             };
@@ -168,7 +169,7 @@
           let expressionNode = XHelpers.selectElementNodeById(
             'Source', 'name', 'some-json-source', sourcesNode) || {};
 
-          let source = Impl.buildElement(expressionNode, sourcesNode, (el) => {
+          let source = Jaxine.buildElement(expressionNode, sourcesNode, (el) => {
             return {
               id: 'name'
             };
@@ -206,7 +207,7 @@
           let argumentNode = XHelpers.selectElementNodeById(
             'Argument', 'name', 'filesys', argumentsNode) || {};
 
-          let source = Impl.buildElement(argumentNode, argumentsNode, (el) => {
+          let source = Jaxine.buildElement(argumentNode, argumentsNode, (el) => {
             return {
               id: 'name'
             };
@@ -245,7 +246,7 @@
           let treeNode = XHelpers.selectElementNodeById(
             'Tree', 'alias', 'skipa', treesNode) || {};
 
-          let tree = Impl.buildElement(treeNode, treesNode, (el) => {
+          let tree = Jaxine.buildElement(treeNode, treesNode, (el) => {
             return {
               id: 'alias'
             };
@@ -282,7 +283,7 @@
 
           if (commandsNode) {
             let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-            let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+            let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
             let result = Helpers.logIfFailedStringify(R.where({
               'name': R.equals('leaf'),
@@ -315,7 +316,7 @@
 
           if (commandsNode) {
             let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-            let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+            let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
             let result = Helpers.logIfFailedStringify(R.where({
               'name': R.equals('leaf'),
@@ -348,7 +349,7 @@
 
           if (commandsNode) {
             let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-            let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+            let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
             let result = Helpers.logIfFailedStringify(R.where({
               'name': R.equals('leaf'),
@@ -383,7 +384,7 @@
 
         if (commandsNode) {
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-          let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+          let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('leaf'),
@@ -419,7 +420,7 @@
 
         if (commandsNode) {
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-          let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+          let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('leaf'),
@@ -455,7 +456,7 @@
 
         if (commandsNode) {
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-          let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+          let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('leaf'),
@@ -490,7 +491,7 @@
 
         if (commandsNode) {
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-          let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+          let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('leaf'),
@@ -528,7 +529,7 @@
 
         if (commandsNode) {
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-          let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+          let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('leaf'),
@@ -565,7 +566,7 @@
 
         if (commandsNode) {
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
-          let command = Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+          let command = Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('leaf'),
@@ -602,7 +603,7 @@
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
 
           expect(() => {
-            Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+            Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
           }).to.throw(Error);
         } else {
           assert.fail('FAILURE! Couldn\'t get Commands node.');
@@ -629,7 +630,7 @@
           let leafCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'leaf', commandsNode) || {};
 
           expect(() => {
-            Impl.buildElement(leafCommandNode, commandsNode, getTestOptions);
+            Jaxine.buildElement(leafCommandNode, commandsNode, getTestOptions);
           }).to.throw(Error);
         } else {
           assert.fail('FAILURE! Couldn\'t get Commands node.');
@@ -678,7 +679,7 @@
       if (commandsNode) {
         let testCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'test', commandsNode) || {};
 
-        let command = Impl.buildElement(testCommandNode, commandsNode, getTestOptions);
+        let command = Jaxine.buildElement(testCommandNode, commandsNode, getTestOptions);
 
         if (command) {
           it('should: return a command object with all children attached', () => {
@@ -738,7 +739,7 @@
       if (commandsNode) {
         let testCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'test', commandsNode) || {};
 
-        let command = Impl.buildElement(testCommandNode, commandsNode, getTestOptions);
+        let command = Jaxine.buildElement(testCommandNode, commandsNode, getTestOptions);
 
         if (command) {
           it('should: return a command object with all children attached', () => {
@@ -798,7 +799,7 @@
       if (commandsNode) {
         let testCommandNode = XHelpers.selectElementNodeById('Command', 'name', 'test', commandsNode) || {};
 
-        let command = Impl.buildElement(testCommandNode, commandsNode, getTestOptions);
+        let command = Jaxine.buildElement(testCommandNode, commandsNode, getTestOptions);
 
         if (command) {
           it('should: return a command object with all children attached', () => {
@@ -844,7 +845,7 @@
         if (expressionsNode) {
           let expressionNode = XHelpers.selectElementNodeById(
             'Expression', 'name', 'meta-prefix-expression', expressionsNode) || {};
-          let command = Impl.buildElement(expressionNode, expressionsNode, getTestOptions);
+          let command = Jaxine.buildElement(expressionNode, expressionsNode, getTestOptions);
 
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('meta-prefix-expression')
