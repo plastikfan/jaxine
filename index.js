@@ -1,4 +1,4 @@
 
 module.exports = {
-  buildElement: require('./converter').buildElement
+  buildElement: require('./lib/converter').buildElement
 };
