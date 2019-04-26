@@ -16,7 +16,7 @@ module.exports = (env) => {
   return {
     mode: mode,
     entry: removeEmpty([
-      ifNotTest('./lib/index.js'),
+      ifNotTest('./index.js'),
       ifTest('./tests/all-tests-entry.js')
     ]),
     module: {
