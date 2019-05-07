@@ -24,7 +24,7 @@
     };
   };
 
-  describe('converter:buildElement', () => {
+  describe('converter.impl:buildElement', () => {
     context('given command with no inheritance', () => {
       it('should: return a command object all local attributes', () => {
         const data = `<?xml version="1.0"?>
@@ -859,7 +859,7 @@
     });
   }); // converter:buildElement
 
-  describe('converter:composeText', () => {
+  describe('converter.impl:composeText', () => {
     const defaultSpec = {
       labels: {
         element: '_',
@@ -997,7 +997,7 @@
     });
   }); // converter:composeText
 
-  describe('converter:validateSpec', () => {
+  describe('converter.impl:validateSpec', () => {
     context('given: valid pre-defined specs', () => {
       const specs = require('../lib/converter').specs;
       Object.getOwnPropertyNames(specs).forEach((specName) => {
@@ -1120,7 +1120,7 @@
         });
       });
     });
-  });
+  }); // converter.impl:validateSpec
 })();
 
 /* eslint-disable no-useless-escape */
