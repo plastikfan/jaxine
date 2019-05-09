@@ -1,8 +1,5 @@
 # jaxine
-Another XML to JSON converter but with additional attribute inheritance and element consolidation. Jaxine uses [xmldom](https://www.npmjs.com/package/xmldom) and [xpath](https://www.npmjs.com/package/xpath) as it primary dependencies in performing XML to JSON conversion. It also takes a slightly different approach to parsing XML in that it is selective in nature, reflecting how clients would use an xpath expression to selectively access certain portions of a document rather than processing the document as a whole.
-
-  Currently, the output generated is of a fixed nature. (It is planned in the future if needs arises, that the user will
-be able to pass in a spec object that describes the shape of the transformation to be applied.)
+Another XML to JSON converter but with additional attribute inheritance and element consolidation. Jaxine uses [xmldom](https://www.npmjs.com/package/xmldom) and [xpath](https://www.npmjs.com/package/xpath) as its primary dependencies in performing XML to JSON conversion. It also takes a slightly different approach to parsing XML in that it is selective in nature, reflecting how clients would use an xpath expression to selectively access certain portions of a document rather than processing the document as a whole.
 
 ## Install
 
@@ -243,9 +240,11 @@ Given a string containing XML content containing text of different types (raw an
 
 ## The API
 
-Consists of a single function: **buildElement**, whose signature is:
+Consists of functions: **buildElement**, **buildElementWithSpec**, **validateSpec** and a list of predefined spec objects: **specs**
 
-> buildElement(elementNode, parentNode, getOptions)
+### buildElement
+
+> buildElement(elementNode, parentNode, getOptions, spec)
 
 * _elementNode_: the element as selected via xpath, which needs to be translated
 * _parentNode_: the parent node of _elementNode_
@@ -254,15 +253,15 @@ element currently being built. This is invoked for all descendant elements and a
   * _id_: The name of the attribute that serves as an identifier to distinguish elements of the same type
   * _recurse_: The name of the attribute through which inheritance is invoked.
   * _discards_: An array containing a list of strings defining the attributes which should be discarded an not be present on the resultant JSON representation.
-
+* _spec_: Describes structure of the built JSON object and additional build options
 The following shows an example using the **buildElement** function:
 
 ```javascript
-
     const DOMParser = require('xmldom').DOMParser;
     const parser = new DOMParser();
     const xpath = require('xpath');
     const R = require('ramda');
+    const jaxine = require('jaxine')
 
     const optionsMap = {
       'DEFAULT': { id: 'name' },
@@ -288,16 +287,217 @@ The following shows an example using the **buildElement** function:
       const applicationNode = xpath.select(`.//Application[@name="pez"]`, document)
 
       if (applicationNode) {
-        let application = Impl.buildElement(applicationNode, document, getTestOptions);
+        const spec = jaxine.specs.default;
+        let application = jaxine.buildElement(applicationNode, document, getTestOptions, spec);
         console.log(`>>> APPLICATION: ${JSON.stringify(application)}`);
       }
-
 ```
 
 :exclamation: Points of note in this example are:
 
 * The parent node in this case was the document root (as obtained from the XML parser). We could easily have selected a different parent node, by using the xpath API to select a different node, and using that as the parent.
 
-* The _getTestOptions_ function here uses the _optionsMap_ as illustrated. The _optionsMap_ has an entry for the _Command_ element, which means that options object will be used for any Command element encountered. _getTestOptions_ will use the DEFAULT entry for any element that is processed that is neither _Command_ or _Tree_. If you invoke buildElement on the _Command_ node (in this case), the callback (_getOptions_) will be invoked just once with the element name set to 'Command'. The callback allows you to define a different options object for each element type encountered whilst processing the descendants of the element you originally invoked _buildElement_ on.
+* The _getOptions_ function here uses the _optionsMap_ as illustrated. The _optionsMap_ has an entry for the _Command_ element, which means that options object will be used for any Command element encountered. _getTestOptions_ will use the DEFAULT entry for any element that is processed that is neither _Command_ or _Tree_. If you invoke buildElement on the _Command_ node (in this case), the callback (_getOptions_) will be invoked just once with the element name set to 'Command'. The callback allows you to define a different options object for each element type encountered whilst processing the descendants of the element you originally invoked _buildElement_ on.
+
+* The additional build options that come as part of the spec, apply to the root element (ie the element that
+build element is called upon) and the entire descendants tree that is derived from it. This is in contrast to
+_getOptions_, (explained above) which is invoked for all descendants of the the root element (not the document root).
+
+* Depending on the XML being processed, it may be necessary to use different spec objects for different parts of the
+document as required.
+
+### buildElementWithSpec
+
+> buildElementWithSpec(elementNode, parentNode, getOptions, spec)
+
+Is a [curried function](https://ramdajs.com/docs/#curry) which allows a custom _buildElementXXX_ function to be defined which is bound to a custom spec. This method should be used if the default spec is not to be used. The user can pass in one of the predefined _specs_ or can define their own.
+
+* _elementNode_: (**see buildElement**)
+* _parentNode_: (**see buildElement**)
+* _getOptions_: (**see buildElement**)
+* _spec_: (**see buildElement**)
+
+### validateSpec
+
+Ensures that spec object is valid, throws if not. The user can invoke _validateSpec_ independently of building an element.
+
+> validateSpec(spec)
+
+* _spec_: The spec to validate
+
+## The Spec
+
+An example of the spec object is as follows:
+
+```javascript
+{
+    labels: {
+      element: '_',
+      descendants: '_children',
+      text: '_text',
+      attribute: '_attributes'
+    },
+    attributesType: 'Member',
+    descendants: {
+      by: 'group',
+      attribute: 'name',
+      throwIfCollision: true,
+      throwIfMissing: true
+    },
+    trim: true
+}
+```
+:cyclone: (sub-object) labels:
+
+  :high_brightness: (string) element: The name of the property that stores the XML element name.
+
+  :high_brightness: (string) descendants: The name of the property holding descendant XML elements structure.
+(typically set to "_children")
+
+  :high_brightness: (string) text: The name of the property holding text local to the XML element as raw text or CDATA text. (typically set to "_text")
+
+  :high_brightness: (string) [optional] attribute: The name of the property that stores the attributes array (if _attributesType_ = "Array". _attribute_ should not be specified if _attributesType_ = "Member")
+
+:cyclone: (string) attributesType: Determines how to construct _attributes_. Can be set to ("Member" | "Array")
+
+:cyclone: (sub-object) descendants:
+
+  :high_brightness: (string) by: Determines how descendants are structured ("index" | "group"). By default,_descendants_ will be stored as an array. Alternatively, they can be restructured into a map object where each descendant is keyed by the _attribute_. (when _by_ = "index": value of attribute must be unique, when _by_ = "group" then _attribute_ value does not have to be unique. In this case, descendants with the same name will be grouped into an array). See *indexBy* and *groupBy* sections below for more details.
+
+  :high_brightness: (string) attribute: The name of the attribute to index/group by.
+
+  :high_brightness: (boolean) [default:false] throwIfCollision: If there are multiple child elements that have the same key value (_descendants.attribute_), then the groupBy/indexBy function will not be invoked and they will be returned as an array (and hence not indexable). If _throwIfCollision_ is true, then an exception will be thrown (does not apply to groupBy/_by_="group").
+
+  :high_brightness: (boolean) [default:false] throwIfMissing: Similar to _throwIfCollision_, but an exception will be thrown if the child element does not contain the attribute as defined in _descendants.attribute_.
+
+:cyclone: (boolean) [default:true] trim: Removes leading and trailing spaces from element text.
+
+#### indexBy (descendants.by="index")
+
+Given the following XML fragment:
+
+```XML
+<Arguments>
+  <ArgumentRef name="name"/>
+  <ArgumentRef name="header"/>
+  <ArgumentRef name="producer"/>
+  <ArgumentRef name="director"/>
+</Arguments>
+```
+
+using _spec.descendants.by_ = 'index' yields the following JSON:
+
+```javascript
+{
+  '_': 'Arguments',
+  '_children': {
+    'name': {
+      'name': 'name',
+      '_': 'ArgumentRef'
+    },
+    'header': {
+      'name': 'header',
+      '_': 'ArgumentRef'
+    },
+    'producer': {
+      'name': 'producer',
+      '_': 'ArgumentRef'
+    },
+    'director': {
+      'name': 'director',
+      '_': 'ArgumentRef'
+    }
+  }
+}
+```
+This shows that the _Arguments_ element contains a __children_ property which is a map object, keyed by the value of the spec.descendants.attribute, in this case "name". Note how the values of "name"s are indeed unique and map to their corresponding _ArgumentRef_ objects.
+
+#### groupBy (descendants.by="group")
+
+Given the following XML fragment:
+
+```XML
+<Arguments>
+  <ArgumentRef name="producer"/>
+  <ArgumentRef name="director" discriminator="A"/>
+  <ArgumentRef name="director" discriminator="B"/>
+</Arguments>
+```
+
+using _spec.descendants.by_ = 'group' yields the following JSON:
+
+```javascript
+{
+  '_': 'Arguments',
+  '_children': {
+    'producer': [{
+      'name': 'producer',
+      '_': 'ArgumentRef'
+    }],
+    'director': [{
+      'name': 'director',
+      'discriminator': 'A',
+      '_': 'ArgumentRef'
+    }, {
+      'name': 'director',
+      'discriminator': 'B',
+      '_': 'ArgumentRef'
+    }]
+  }
+}
+```
+This shows that the _Arguments_ element contains a __children_ property which is a map object, keyed by the value of the spec.descendants.attribute, in this case "name". This time however, the map object keys to an array which contains the collection of _ArgumentRef_ children which all have the attribute equal to that key, ie the "name" attribute. In this case, we can see that there are 2 children whose "name" attribute are identical ("director"), so they both appear in the array whose key is "director".
+
+#### descendants.by not specified
+
+Use a spec without descendants.by setting when having the children of a particular element being populated simply as an array, so for example, the following xml
+
+```XML
+<Arguments>
+  <ArgumentRef name="producer"/>
+  <ArgumentRef name="director" discriminator="A"/>
+  <ArgumentRef name="director" discriminator="B"/>
+</Arguments>
+```
+
+yields the following JSON:
+
+```javascript
+{
+  '_': 'Arguments',
+  '_children': [{
+    'name': 'producer',
+    '_': 'ArgumentRef'
+  }, {
+    'name': 'director',
+    'discriminator': 'A',
+    '_': 'ArgumentRef'
+  }, {
+    'name': 'director',
+    'discriminator': 'B',
+    '_': 'ArgumentRef'
+  }]
+}
+```
+This shows that the _Arguments_ element contains a __children_ property which is simply an array containing all of the _ArgumentRef_ children of _Arguments_. This is the scheme used by the default spec.
+
+#### Pre-defined specs
+
+```javascript
+const jaxine = require('jaxine');
+const indexByNameSpec = jaxine.specs.indexByName;
+
+jaxine.buildElementWithSpec( ..., indexByNameSpec);
+
+```
+
+#### Using the default spec
+
+```javascript
+const jaxine = require('jaxine');
+
+jaxine.buildElement( ... );
+
+```
 
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
