@@ -24,7 +24,7 @@
     };
   };
 
-  describe('converter:buildElement', () => {
+  describe('converter.impl:buildElement', () => {
     context('given command with no inheritance', () => {
       it('should: return a command object all local attributes', () => {
         const data = `<?xml version="1.0"?>
@@ -859,9 +859,18 @@
     });
   }); // converter:buildElement
 
-  describe('converter:composeText', () => {
+  describe('converter.impl:composeText', () => {
+    const defaultSpec = {
+      labels: {
+        element: '_',
+        descendants: '_children',
+        text: '_text'
+      },
+      attributesType: 'Member'
+    };
+
     context('given: a Pattern element with a single text child', () => {
-      it('should return the trimmed text.', () => {
+      it('should: return the trimmed text.', () => {
         const data = `<?xml version="1.0"?>
           <Application name="pez">
             <Expressions name="content-expressions">
@@ -876,7 +885,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode);
+          let result = Impl.composeText(patternNode, defaultSpec);
 
           expect(result).to.equal('SOME-RAW-TEXT');
         } else {
@@ -901,7 +910,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode);
+          let result = Impl.composeText(patternNode, defaultSpec);
 
           expect(result).to.equal('.SOME-CDATA-TEXT');
         } else {
@@ -911,7 +920,7 @@
     });
 
     context('given: a Pattern element with a single text child followed by single CDATA section', () => {
-      it('return raw text child concatenated with CDATA text.', () => {
+      it('should: return raw text child concatenated with CDATA text.', () => {
         const data = `<?xml version="1.0"?>
           <Application name="pez">
             <Expressions name="content-expressions">
@@ -926,7 +935,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode);
+          let result = Impl.composeText(patternNode, defaultSpec);
 
           expect(result).to.equal('SOME-RAW-TEXT.SOME-CDATA-TEXT');
         } else {
@@ -951,7 +960,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode);
+          let result = Impl.composeText(patternNode, defaultSpec);
 
           expect(result).to.equal('SOME-RAW-TEXT.SOME-CDATA-TEXT.SOME-MORE-CDATA-TEXT');
         } else {
@@ -978,7 +987,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode);
+          let result = Impl.composeText(patternNode, defaultSpec);
 
           expect(result).to.equal('.SOME-CDATA-TEXT');
         } else {
@@ -987,6 +996,179 @@
       });
     });
   }); // converter:composeText
+
+  describe('converter.impl:validateSpec', () => {
+    context('given: valid pre-defined specs', () => {
+      const specs = require('../lib/converter').specs;
+      Object.getOwnPropertyNames(specs).forEach((specName) => {
+        const spec = specs[specName];
+
+        it(`"${specName}" spec validation, should not throw`, () => {
+          expect(Impl.validateSpec(spec)).to.be.true();
+        });
+      });
+    });
+
+    context('Invalid spec', () => {
+      const tests = [{
+        given: 'spec with missing "attributesType"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          }
+        }
+      },
+      {
+        given: 'spec with missing "labels"',
+        spec: {
+          attributesType: 'Member'
+        }
+      },
+      {
+        given: 'spec with "element" missing from "labels',
+        spec: {
+          labels: {
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'Member'
+        }
+      },
+      {
+        given: 'spec with "descendants" missing from "labels',
+        spec: {
+          labels: {
+            element: '_',
+            text: '_text'
+          },
+          attributesType: 'Member'
+        }
+      },
+      {
+        given: 'spec with "text" missing from "labels',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children'
+          },
+          attributesType: 'Member'
+        }
+      },
+      {
+        given: 'spec with invalid "attributesType"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'RUBBISH'
+        }
+      },
+      {
+        given: 'spec with "attributesType" = "Array" and missing "attribute" label',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'Array'
+        }
+      },
+      {
+        given: 'spec with "descendants" and invalid "by"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text',
+            attribute: '_attributes'
+          },
+          attributesType: 'Member',
+          descendants: {
+            by: 'RUBBISH',
+            attribute: 'name'
+          }
+        }
+      },
+      {
+        given: 'spec with "descendants" and missing "descendants.attribute"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text',
+            attribute: '_attributes'
+          },
+          attributesType: 'Member',
+          descendants: {
+            by: 'index'
+          }
+        }
+      },
+      {
+        given: 'spec with invalid "throwIfCollision"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'Member',
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfCollision: 'blah'
+          }
+        }
+      },
+      {
+        given: 'spec with "throwIfCollision" enabled and descendants.by="group"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'Member',
+          descendants: {
+            by: 'group',
+            attribute: 'name',
+            throwIfCollision: true
+          }
+        }
+      },
+      {
+        given: 'spec with invalid "throwIfMissing"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'Member',
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfMissing: 'blah'
+          }
+        }
+      }];
+
+      tests.forEach((t) => {
+        context(`given: ${t.given}`, () => {
+          it('should: throw', () => {
+            expect(() => {
+              Impl.validateSpec(t.spec);
+            }).to.throw();
+          });
+        });
+      });
+    });
+  }); // converter.impl:validateSpec
 })();
 
 /* eslint-disable no-useless-escape */
