@@ -865,8 +865,7 @@
         element: '_',
         descendants: '_children',
         text: '_text'
-      },
-      attributesType: 'Member'
+      }
     };
 
     context('given: a Pattern element with a single text child', () => {
@@ -1011,19 +1010,8 @@
 
     context('Invalid spec', () => {
       const tests = [{
-        given: 'spec with missing "attributesType"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          }
-        }
-      },
-      {
         given: 'spec with missing "labels"',
         spec: {
-          attributesType: 'Member'
         }
       },
       {
@@ -1032,8 +1020,7 @@
           labels: {
             descendants: '_children',
             text: '_text'
-          },
-          attributesType: 'Member'
+          }
         }
       },
       {
@@ -1042,8 +1029,7 @@
           labels: {
             element: '_',
             text: '_text'
-          },
-          attributesType: 'Member'
+          }
         }
       },
       {
@@ -1052,30 +1038,7 @@
           labels: {
             element: '_',
             descendants: '_children'
-          },
-          attributesType: 'Member'
-        }
-      },
-      {
-        given: 'spec with invalid "attributesType"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          attributesType: 'RUBBISH'
-        }
-      },
-      {
-        given: 'spec with "attributesType" = "Array" and missing "attribute" label',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          attributesType: 'Array'
+          }
         }
       },
       {
@@ -1087,7 +1050,6 @@
             text: '_text',
             attribute: '_attributes'
           },
-          attributesType: 'Member',
           descendants: {
             by: 'RUBBISH',
             attribute: 'name'
@@ -1103,7 +1065,6 @@
             text: '_text',
             attribute: '_attributes'
           },
-          attributesType: 'Member',
           descendants: {
             by: 'index'
           }
@@ -1117,7 +1078,6 @@
             descendants: '_children',
             text: '_text'
           },
-          attributesType: 'Member',
           descendants: {
             by: 'index',
             attribute: 'name',
@@ -1133,7 +1093,6 @@
             descendants: '_children',
             text: '_text'
           },
-          attributesType: 'Member',
           descendants: {
             by: 'group',
             attribute: 'name',
@@ -1149,7 +1108,6 @@
             descendants: '_children',
             text: '_text'
           },
-          attributesType: 'Member',
           descendants: {
             by: 'index',
             attribute: 'name',

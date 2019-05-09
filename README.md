@@ -337,7 +337,6 @@ An example of the spec object is as follows:
       text: '_text',
       attribute: '_attributes'
     },
-    attributesType: 'Member',
     descendants: {
       by: 'group',
       attribute: 'name',
@@ -356,9 +355,7 @@ An example of the spec object is as follows:
 
   :high_brightness: (string) text: The name of the property holding text local to the XML element as raw text or CDATA text. (typically set to "_text")
 
-  :high_brightness: (string) [optional] attribute: The name of the property that stores the attributes array (if _attributesType_ = "Array". _attribute_ should not be specified if _attributesType_ = "Member")
-
-:cyclone: (string) attributesType: Determines how to construct _attributes_. Can be set to ("Member" | "Array")
+  :high_brightness: (string) [optional] attribute: The name of the property that stores the attributes array.
 
 :cyclone: (sub-object) descendants:
 

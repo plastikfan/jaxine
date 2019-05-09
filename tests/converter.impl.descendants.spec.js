@@ -25,7 +25,6 @@
       text: '_text',
       attribute: '_attributes'
     },
-    attributesType: 'Member',
     descendants: {
       by: 'index',
       attribute: 'name',
