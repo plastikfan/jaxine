@@ -49,7 +49,7 @@
   const descendantsProp = R.prop(indexBySpec.labels.descendants);
 
   describe('converter.impl:buildElement (descendants)', () => {
-    context('index descendants by', () => {
+    context('index/group descendants by', () => {
       const tests = [{
         given: 'Element whose children all have a unique name attribute',
         data: `<?xml version="1.0"?>
@@ -69,7 +69,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are indexed by "name"', () => {
+          it('indexBy should: create element whose descendants are indexed by "name"', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
@@ -108,7 +108,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are not indexed', () => {
+          it('indexBy should: create element whose descendants are not indexed', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
@@ -143,7 +143,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are not indexed', () => {
+          it('indexBy should: create element whose descendants are not indexed', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
@@ -179,7 +179,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are indexed by "name" with lost items', () => {
+          it('indexBy should: create element whose descendants are indexed by "name" with lost items', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
@@ -226,7 +226,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are indexed by "name" with lost items', () => {
+          it('indexBy should: create element whose descendants are indexed by "name" with lost items', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
@@ -273,7 +273,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: throw on name collision', () => {
+          it('indexBy should: throw on name collision', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
@@ -306,7 +306,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: throw on missing "name"', () => {
+          it('indexBy should: throw on missing "name"', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
@@ -319,31 +319,8 @@
             }
           });
         }
-      }];
-
-      tests.forEach((t) => {
-        const document = parser.parseFromString(t.data);
-        const commandsNode = XHelpers.selectFirst('/Application/Cli/Commands', document);
-
-        if (commandsNode) {
-          const commandNode = XHelpers.selectFirst(`./Command[@name="${t.commandName}"]`,
-            commandsNode);
-
-          if (commandNode) {
-            context(`given: ${t.given}`, () => {
-              t.verify(commandsNode, t.commandName);
-            });
-          } else {
-            assert.fail(`Couldn't get Command node named: "${t.commandName}"`);
-          }
-        } else {
-          assert.fail('Couldn\'t get Commands node.');
-        }
-      });
-    }); // index descendants by
-
-    context('group descendants by', () => {
-      const tests = [{
+      }, // end of indexBy
+      {
         given: 'Element whose children all have a unique name attribute',
         data: `<?xml version="1.0"?>
           <Application name="pez">
@@ -362,7 +339,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are grouped by "name"', () => {
+          it('groupBy should: create element whose descendants are grouped by "name"', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
@@ -403,14 +380,15 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are not grouped', () => {
+          it('groupBy should: create element whose descendants are not grouped', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode, getTestOptions, groupBySpec);
+              const argumentsElement = Impl.buildElement(
+                argumentsNode, commandNode, getTestOptions, groupBySpec);
               const children = descendantsProp(argumentsElement);
 
-              expect(children).to.be.an('array'); // groupBy not completed
+              expect(children).to.be.an('array');
               expect(children).to.have.lengthOf(4);
 
               R.forEachObjIndexed((child) => {
@@ -442,11 +420,12 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are not grouped', () => {
+          it('groupBy should: create element whose descendants are not grouped', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode, getTestOptions, groupBySpec);
+              const argumentsElement = Impl.buildElement(
+                argumentsNode, commandNode, getTestOptions, groupBySpec);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('array');
@@ -482,14 +461,16 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are grouped by "name"', () => {
+          it('groupBy should: create element whose descendants are grouped by "name"', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode, getTestOptions, groupBySpec);
+              const argumentsElement = Impl.buildElement(
+                argumentsNode, commandNode, getTestOptions, groupBySpec);
               const children = descendantsProp(argumentsElement);
 
-              expect(children).to.be.an('object').that.has.all.keys('name', 'header', 'producer', 'director');
+              expect(children).to.be.an('object').that.has.all.keys(
+                'name', 'header', 'producer', 'director');
               expect(R.keys(children)).to.have.lengthOf(4);
 
               R.forEachObjIndexed((val, name) => {
@@ -537,11 +518,12 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: create element whose descendants are grouped by "name"', () => {
+          it('groupBy should: create element whose descendants are grouped by "name"', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode, getTestOptions, groupBySpec);
+              const argumentsElement = Impl.buildElement(
+                argumentsNode, commandNode, getTestOptions, groupBySpec);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('object').that.has.all.keys('director');
@@ -582,7 +564,7 @@
           </Application>`,
         commandName: 'domain-command',
         verify: (commandsNode, commandNode) => {
-          it('should: throw on missing "name"', () => {
+          it('groupBy should: throw on missing "name"', () => {
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             const groupBySpecThrows = R.set(R.lensPath(['descendants', 'throwIfMissing']),
@@ -609,7 +591,7 @@
             commandsNode);
 
           if (commandNode) {
-            it(`given: ${t.given}`, () => {
+            context(`given: ${t.given}`, () => {
               t.verify(commandsNode, t.commandName);
             });
           } else {
@@ -619,6 +601,6 @@
           assert.fail('Couldn\'t get Commands node.');
         }
       });
-    }); // group descendants by
+    }); // index/group descendants by
   }); // converter:buildElement (descendants)
 })();
