@@ -1011,7 +1011,7 @@
 
     context('Invalid spec', () => {
       const tests = [{
-        given: 'given: spec with missing "attributesType"',
+        given: 'spec with missing "attributesType"',
         spec: {
           labels: {
             element: '_',
@@ -1021,13 +1021,13 @@
         }
       },
       {
-        given: 'given: spec with missing "labels"',
+        given: 'spec with missing "labels"',
         spec: {
           attributesType: 'Member'
         }
       },
       {
-        given: 'given: spec with "element" missing from "labels',
+        given: 'spec with "element" missing from "labels',
         spec: {
           labels: {
             descendants: '_children',
@@ -1037,7 +1037,7 @@
         }
       },
       {
-        given: 'given: spec with "descendants" missing from "labels',
+        given: 'spec with "descendants" missing from "labels',
         spec: {
           labels: {
             element: '_',
@@ -1047,7 +1047,7 @@
         }
       },
       {
-        given: 'given: spec with "text" missing from "labels',
+        given: 'spec with "text" missing from "labels',
         spec: {
           labels: {
             element: '_',
@@ -1057,7 +1057,7 @@
         }
       },
       {
-        given: 'given: spec with invalid "attributesType"',
+        given: 'spec with invalid "attributesType"',
         spec: {
           labels: {
             element: '_',
@@ -1068,7 +1068,7 @@
         }
       },
       {
-        given: 'given: spec with "attributesType" = "Array" and missing "attribute" label',
+        given: 'spec with "attributesType" = "Array" and missing "attribute" label',
         spec: {
           labels: {
             element: '_',
@@ -1079,7 +1079,7 @@
         }
       },
       {
-        given: 'given: spec with "descendants" and invalid "by"',
+        given: 'spec with "descendants" and invalid "by"',
         spec: {
           labels: {
             element: '_',
@@ -1095,7 +1095,7 @@
         }
       },
       {
-        given: 'given: spec with "descendants" and missing "descendants.attribute"',
+        given: 'spec with "descendants" and missing "descendants.attribute"',
         spec: {
           labels: {
             element: '_',
@@ -1106,6 +1106,54 @@
           attributesType: 'Member',
           descendants: {
             by: 'index'
+          }
+        }
+      },
+      {
+        given: 'spec with invalid "throwIfCollision"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'Member',
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfCollision: 'blah'
+          }
+        }
+      },
+      {
+        given: 'spec with "throwIfCollision" enabled and descendants.by="group"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'Member',
+          descendants: {
+            by: 'group',
+            attribute: 'name',
+            throwIfCollision: true
+          }
+        }
+      },
+      {
+        given: 'spec with invalid "throwIfMissing"',
+        spec: {
+          labels: {
+            element: '_',
+            descendants: '_children',
+            text: '_text'
+          },
+          attributesType: 'Member',
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfMissing: 'blah'
           }
         }
       }];
