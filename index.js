@@ -1,4 +1,8 @@
+const Converter = require('./lib/converter');
 
 module.exports = {
-  buildElement: require('./lib/converter').buildElement
+  specs: Converter.specs,
+  buildElement: Converter.buildElement,
+  buildElementWithSpec: Converter.buildElementWithSpec,
+  validateSpec: Converter.validateSpec
 };

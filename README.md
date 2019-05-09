@@ -254,6 +254,8 @@ element currently being built. This is invoked for all descendant elements and a
   * _recurse_: The name of the attribute through which inheritance is invoked.
   * _discards_: An array containing a list of strings defining the attributes which should be discarded an not be present on the resultant JSON representation.
 
+The following shows an example using the **buildElement** function:
+
 ```javascript
     const DOMParser = require('xmldom').DOMParser;
     const parser = new DOMParser();
@@ -314,8 +316,6 @@ Is a [curried function](https://ramdajs.com/docs/#curry) which allows a custom _
 * _parentNode_: (**see buildElement**)
 * _getOptions_: (**see buildElement**)
 * _spec_: Describes structure of the built JSON object and additional build options
-The following shows an example using the **buildElement** function:
-
 
 ### validateSpec
 
