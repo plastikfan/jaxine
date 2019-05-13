@@ -18,7 +18,6 @@
       discards: ['inherits', 'abstract'],
       descendants: {
         by: 'index',
-        attribute: 'name',
         throwIfCollision: false,
         throwIfMissing: false
       }
@@ -32,7 +31,6 @@
       discards: ['inherits', 'abstract'],
       descendants: {
         by: 'index',
-        attribute: 'name',
         throwIfCollision: true,
         throwIfMissing: true
       }

@@ -1065,80 +1065,6 @@
             descendants: '_children'
           }
         }
-      },
-      {
-        given: 'spec with "descendants" and invalid "by"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text',
-            attribute: '_attributes'
-          },
-          descendants: {
-            by: 'RUBBISH',
-            attribute: 'name'
-          }
-        }
-      },
-      {
-        given: 'spec with "descendants" and missing "descendants.attribute"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text',
-            attribute: '_attributes'
-          },
-          descendants: {
-            by: 'index'
-          }
-        }
-      },
-      {
-        given: 'spec with invalid "throwIfCollision"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          descendants: {
-            by: 'index',
-            attribute: 'name',
-            throwIfCollision: 'blah'
-          }
-        }
-      },
-      {
-        given: 'spec with "throwIfCollision" enabled and descendants.by="group"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          descendants: {
-            by: 'group',
-            attribute: 'name',
-            throwIfCollision: true
-          }
-        }
-      },
-      {
-        given: 'spec with invalid "throwIfMissing"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          descendants: {
-            by: 'index',
-            attribute: 'name',
-            throwIfMissing: 'blah'
-          }
-        }
       }];
 
       tests.forEach((t) => {
@@ -1153,6 +1079,65 @@
     });
   }); // converter.impl:validateSpec
 
+  describe('converter.impl:validateOptions', () => {
+    context('Invalid options', () => {
+      const tests = [{
+        given: 'options with "descendants" and invalid "by"',
+        options: {
+          descendants: {
+            by: 'RUBBISH',
+            attribute: 'name'
+          }
+        }
+      },
+      {
+        given: 'options with "descendants" and missing "descendants.attribute"',
+        options: {
+          descendants: {
+            by: 'index'
+          }
+        }
+      }, {
+        given: 'options with invalid "throwIfCollision"',
+        options: {
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfCollision: 'blah'
+          }
+        }
+      }, {
+        given: 'options with "throwIfCollision" enabled and descendants.by="group"',
+        options: {
+          descendants: {
+            by: 'group',
+            attribute: 'name',
+            throwIfCollision: true
+          }
+        }
+      }, {
+        given: 'options with invalid "throwIfMissing"',
+        options: {
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfMissing: 'blah'
+          }
+        }
+      }];
+
+      tests.forEach((t) => {
+        context(`given: ${t.given}`, () => {
+          it('should: throw', () => {
+            expect(() => {
+              Impl.validateOptions(t.options);
+            }).to.throw();
+          });
+        });
+      });
+    });
+  }); // converter.impl:validateOptions
+
   describe('converter.impl.buildLocalAttributes', () => {
     const spec = Object.freeze({
       labels: {
@@ -1160,12 +1145,6 @@
         descendants: '_children',
         text: '_text',
         attributes: '_attributes'
-      },
-      descendants: {
-        by: 'index',
-        attribute: 'name',
-        throwIfMissing: true,
-        throwIfCollision: true
       },
       trim: true
     });
