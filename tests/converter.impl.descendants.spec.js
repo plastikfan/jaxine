@@ -44,26 +44,12 @@
       element: '_',
       descendants: '_children',
       text: '_text'
-    },
-    descendants: {
-      by: 'index',
-      attribute: 'name',
-      throwIfCollision: false,
-      throwIfMissing: false
     }
   };
   Object.freeze(indexBySpec);
 
   const groupBySpec = R.set(R.lensPath(['descendants', 'by']), 'group')(indexBySpec);
   Object.freeze(groupBySpec);
-
-  const indexBySpecThrows = R.mergeDeepRight(indexBySpec, {
-    descendants: {
-      throwIfCollision: true,
-      throwIfMissing: true
-    }
-  });
-  Object.freeze(indexBySpecThrows);
 
   const descendantsProp = R.prop(indexBySpec.labels.descendants);
 
@@ -298,7 +284,7 @@
             if (argumentsNode) {
               expect(() => {
                 Impl.buildElementWithSpec(argumentsNode, commandNode,
-                  indexBySpecThrows, getTestOptionsThrows);
+                  indexBySpec, getTestOptionsThrows);
               }).to.throw();
             } else {
               assert.fail('Couldn\'t get Arguments node.');
@@ -331,7 +317,7 @@
             if (argumentsNode) {
               expect(() => {
                 Impl.buildElementWithSpec(argumentsNode, commandNode,
-                  indexBySpecThrows, getTestOptionsThrows);
+                  indexBySpec, getTestOptionsThrows);
               }).to.throw();
             } else {
               assert.fail('Couldn\'t get Arguments node.');

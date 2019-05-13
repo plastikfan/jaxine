@@ -23,7 +23,6 @@
       discards: ['inherits', 'abstract'],
       descendants: {
         by: 'index',
-        attribute: 'name',
         throwIfCollision: false,
         throwIfMissing: false
       }
@@ -144,7 +143,6 @@
               id: 'name',
               descendants: {
                 by: 'index',
-                attribute: 'name',
                 throwIfCollision: false,
                 throwIfMissing: false
               }
@@ -186,7 +184,6 @@
               id: 'name',
               descendants: {
                 by: 'index',
-                attribute: 'name',
                 throwIfCollision: false,
                 throwIfMissing: false
               }
@@ -230,7 +227,6 @@
               id: 'name',
               descendants: {
                 by: 'index',
-                attribute: 'name',
                 throwIfCollision: false,
                 throwIfMissing: false
               }
@@ -275,7 +271,6 @@
               id: 'alias',
               descendants: {
                 by: 'index',
-                attribute: 'alias',
                 throwIfCollision: false,
                 throwIfMissing: false
               }
