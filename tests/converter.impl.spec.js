@@ -1127,6 +1127,60 @@
       });
     });
   }); // converter.impl:validateSpec
+
+  describe('converter.impl.buildLocalAttributes', () => {
+    const spec = Object.freeze({
+      labels: {
+        element: '_',
+        descendants: '_children',
+        text: '_text',
+        attributes: '_attributes'
+      },
+      descendants: {
+        by: 'index',
+        attribute: 'name',
+        throwIfMissing: true,
+        throwIfCollision: true
+      },
+      trim: true
+    });
+
+    context('given: a spec with "attributes" label set', () => {
+      it('should: populate attributes into array', () => {
+        const data = `<?xml version="1.0"?>
+          <Application name="pez">
+            <Directory name="archive"
+              field="archive-location"
+              date-modified="23 jun 2016"
+              tags="front,back"
+              category="hi-res"
+              format="flac">
+            </Directory>
+          </Application>`;
+
+        const document = parser.parseFromString(data);
+        const applicationNode = XHelpers.selectFirst('/Application', document);
+
+        if (applicationNode) {
+          const directoryNode = XHelpers.selectElementNodeById(
+            'Directory', 'name', 'archive', applicationNode) || {};
+          const directory = Jaxine.buildElementWithSpec(directoryNode, applicationNode,
+            getTestOptions, spec);
+
+          expect(R.has('_attributes')(directory));
+          const attributes = R.prop('_attributes')(directory);
+          const attributeKeys = R.reduce((acc, val) => {
+            return R.concat(acc, R.keys(val));
+          }, [])(attributes);
+
+          expect(R.all(at => R.includes(at, attributeKeys))(
+            ['name', 'field', 'date-modified', 'tags', 'category', 'format'])).to.be.true();
+        } else {
+          assert.fail('Couldn\'t get Application node.');
+        }
+      });
+    });
+  });
 })();
 
 /* eslint-disable no-useless-escape */
