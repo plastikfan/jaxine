@@ -20,7 +20,12 @@
     return {
       id: 'name',
       recurse: 'inherits',
-      discards: ['inherits', 'abstract']
+      discards: ['inherits', 'abstract'],
+      descendants: {
+        by: 'index',
+        throwIfCollision: false,
+        throwIfMissing: false
+      }
     };
   };
 
@@ -135,7 +140,12 @@
 
           let element = Jaxine.buildElement(expressionNode, expressionsNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -171,7 +181,12 @@
 
           let source = Jaxine.buildElement(expressionNode, sourcesNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -209,7 +224,12 @@
 
           let source = Jaxine.buildElement(argumentNode, argumentsNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -248,7 +268,12 @@
 
           let tree = Jaxine.buildElement(treeNode, treesNode, (el) => {
             return {
-              id: 'alias'
+              id: 'alias',
+              descendants: {
+                by: 'index',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -865,8 +890,7 @@
         element: '_',
         descendants: '_children',
         text: '_text'
-      },
-      attributesType: 'Member'
+      }
     };
 
     context('given: a Pattern element with a single text child', () => {
@@ -885,7 +909,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT');
         } else {
@@ -910,7 +934,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('.SOME-CDATA-TEXT');
         } else {
@@ -935,7 +959,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT.SOME-CDATA-TEXT');
         } else {
@@ -960,7 +984,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT.SOME-CDATA-TEXT.SOME-MORE-CDATA-TEXT');
         } else {
@@ -987,7 +1011,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('.SOME-CDATA-TEXT');
         } else {
@@ -1011,19 +1035,8 @@
 
     context('Invalid spec', () => {
       const tests = [{
-        given: 'spec with missing "attributesType"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          }
-        }
-      },
-      {
         given: 'spec with missing "labels"',
         spec: {
-          attributesType: 'Member'
         }
       },
       {
@@ -1032,8 +1045,7 @@
           labels: {
             descendants: '_children',
             text: '_text'
-          },
-          attributesType: 'Member'
+          }
         }
       },
       {
@@ -1042,8 +1054,7 @@
           labels: {
             element: '_',
             text: '_text'
-          },
-          attributesType: 'Member'
+          }
         }
       },
       {
@@ -1052,108 +1063,6 @@
           labels: {
             element: '_',
             descendants: '_children'
-          },
-          attributesType: 'Member'
-        }
-      },
-      {
-        given: 'spec with invalid "attributesType"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          attributesType: 'RUBBISH'
-        }
-      },
-      {
-        given: 'spec with "attributesType" = "Array" and missing "attribute" label',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          attributesType: 'Array'
-        }
-      },
-      {
-        given: 'spec with "descendants" and invalid "by"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text',
-            attribute: '_attributes'
-          },
-          attributesType: 'Member',
-          descendants: {
-            by: 'RUBBISH',
-            attribute: 'name'
-          }
-        }
-      },
-      {
-        given: 'spec with "descendants" and missing "descendants.attribute"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text',
-            attribute: '_attributes'
-          },
-          attributesType: 'Member',
-          descendants: {
-            by: 'index'
-          }
-        }
-      },
-      {
-        given: 'spec with invalid "throwIfCollision"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          attributesType: 'Member',
-          descendants: {
-            by: 'index',
-            attribute: 'name',
-            throwIfCollision: 'blah'
-          }
-        }
-      },
-      {
-        given: 'spec with "throwIfCollision" enabled and descendants.by="group"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          attributesType: 'Member',
-          descendants: {
-            by: 'group',
-            attribute: 'name',
-            throwIfCollision: true
-          }
-        }
-      },
-      {
-        given: 'spec with invalid "throwIfMissing"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          attributesType: 'Member',
-          descendants: {
-            by: 'index',
-            attribute: 'name',
-            throwIfMissing: 'blah'
           }
         }
       }];
@@ -1169,6 +1078,113 @@
       });
     });
   }); // converter.impl:validateSpec
+
+  describe('converter.impl:validateOptions', () => {
+    context('Invalid options', () => {
+      const tests = [{
+        given: 'options with "descendants" and invalid "by"',
+        options: {
+          descendants: {
+            by: 'RUBBISH',
+            attribute: 'name'
+          }
+        }
+      },
+      {
+        given: 'options with "descendants" and missing "descendants.attribute"',
+        options: {
+          descendants: {
+            by: 'index'
+          }
+        }
+      }, {
+        given: 'options with invalid "throwIfCollision"',
+        options: {
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfCollision: 'blah'
+          }
+        }
+      }, {
+        given: 'options with "throwIfCollision" enabled and descendants.by="group"',
+        options: {
+          descendants: {
+            by: 'group',
+            attribute: 'name',
+            throwIfCollision: true
+          }
+        }
+      }, {
+        given: 'options with invalid "throwIfMissing"',
+        options: {
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfMissing: 'blah'
+          }
+        }
+      }];
+
+      tests.forEach((t) => {
+        context(`given: ${t.given}`, () => {
+          it('should: throw', () => {
+            expect(() => {
+              Impl.validateOptions(t.options);
+            }).to.throw();
+          });
+        });
+      });
+    });
+  }); // converter.impl:validateOptions
+
+  describe('converter.impl.buildLocalAttributes', () => {
+    const spec = Object.freeze({
+      labels: {
+        element: '_',
+        descendants: '_children',
+        text: '_text',
+        attributes: '_attributes'
+      },
+      trim: true
+    });
+
+    context('given: a spec with "attributes" label set', () => {
+      it('should: populate attributes into array', () => {
+        const data = `<?xml version="1.0"?>
+          <Application name="pez">
+            <Directory name="archive"
+              field="archive-location"
+              date-modified="23 jun 2016"
+              tags="front,back"
+              category="hi-res"
+              format="flac">
+            </Directory>
+          </Application>`;
+
+        const document = parser.parseFromString(data);
+        const applicationNode = XHelpers.selectFirst('/Application', document);
+
+        if (applicationNode) {
+          const directoryNode = XHelpers.selectElementNodeById(
+            'Directory', 'name', 'archive', applicationNode) || {};
+          const directory = Jaxine.buildElementWithSpec(directoryNode, applicationNode,
+            spec, getTestOptions);
+
+          expect(R.has('_attributes')(directory));
+          const attributes = R.prop('_attributes')(directory);
+          const attributeKeys = R.reduce((acc, val) => {
+            return R.concat(acc, R.keys(val));
+          }, [])(attributes);
+
+          expect(R.all(at => R.includes(at, attributeKeys))(
+            ['name', 'field', 'date-modified', 'tags', 'category', 'format'])).to.be.true();
+        } else {
+          assert.fail('Couldn\'t get Application node.');
+        }
+      });
+    });
+  });
 })();
 
 /* eslint-disable no-useless-escape */
