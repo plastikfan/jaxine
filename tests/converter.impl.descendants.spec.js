@@ -71,7 +71,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode,
+              const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
                 indexBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -110,7 +110,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode,
+              const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
                 indexBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -145,7 +145,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode,
+              const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
                 indexBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -181,7 +181,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode,
+              const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
                 indexBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -228,7 +228,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode,
+              const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
                 indexBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -309,7 +309,7 @@
 
             if (argumentsNode) {
               expect(() => {
-                Impl.buildElement(argumentsNode, commandNode,
+                Impl.buildElementWithSpec(argumentsNode, commandNode,
                   indexBySpecThrows, getTestOptions);
               }).to.throw();
             } else {
@@ -341,7 +341,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(argumentsNode, commandNode,
+              const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
                 groupBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -382,7 +382,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(
+              const argumentsElement = Impl.buildElementWithSpec(
                 argumentsNode, commandNode, groupBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -422,7 +422,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(
+              const argumentsElement = Impl.buildElementWithSpec(
                 argumentsNode, commandNode, groupBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -463,7 +463,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(
+              const argumentsElement = Impl.buildElementWithSpec(
                 argumentsNode, commandNode, groupBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -520,7 +520,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             if (argumentsNode) {
-              const argumentsElement = Impl.buildElement(
+              const argumentsElement = Impl.buildElementWithSpec(
                 argumentsNode, commandNode, groupBySpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
@@ -570,7 +570,7 @@
 
             if (argumentsNode) {
               expect(() => {
-                Impl.buildElement(argumentsNode, commandNode,
+                Impl.buildElementWithSpec(argumentsNode, commandNode,
                   groupBySpecThrows, getTestOptions);
               }).to.throw();
             } else {
