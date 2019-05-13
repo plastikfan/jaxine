@@ -884,7 +884,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT');
         } else {
@@ -909,7 +909,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('.SOME-CDATA-TEXT');
         } else {
@@ -934,7 +934,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT.SOME-CDATA-TEXT');
         } else {
@@ -959,7 +959,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT.SOME-CDATA-TEXT.SOME-MORE-CDATA-TEXT');
         } else {
@@ -986,7 +986,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('.SOME-CDATA-TEXT');
         } else {
