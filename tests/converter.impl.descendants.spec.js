@@ -15,9 +15,30 @@
     return {
       id: 'name',
       recurse: 'inherits',
-      discards: ['inherits', 'abstract']
+      discards: ['inherits', 'abstract'],
+      descendants: {
+        by: 'index',
+        attribute: 'name',
+        throwIfCollision: false,
+        throwIfMissing: false
+      }
     };
   };
+
+  const getTestOptionsThrows = (el) => {
+    return {
+      id: 'name',
+      recurse: 'inherits',
+      discards: ['inherits', 'abstract'],
+      descendants: {
+        by: 'index',
+        attribute: 'name',
+        throwIfCollision: true,
+        throwIfMissing: true
+      }
+    };
+  };
+
   const indexBySpec = {
     labels: {
       element: '_',
@@ -277,7 +298,7 @@
             if (argumentsNode) {
               expect(() => {
                 Impl.buildElementWithSpec(argumentsNode, commandNode,
-                  indexBySpecThrows, getTestOptions);
+                  indexBySpecThrows, getTestOptionsThrows);
               }).to.throw();
             } else {
               assert.fail('Couldn\'t get Arguments node.');
@@ -310,7 +331,7 @@
             if (argumentsNode) {
               expect(() => {
                 Impl.buildElementWithSpec(argumentsNode, commandNode,
-                  indexBySpecThrows, getTestOptions);
+                  indexBySpecThrows, getTestOptionsThrows);
               }).to.throw();
             } else {
               assert.fail('Couldn\'t get Arguments node.');
@@ -342,7 +363,19 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
-                groupBySpec, getTestOptions);
+                groupBySpec, (el) => {
+                  return {
+                    id: 'name',
+                    recurse: 'inherits',
+                    discards: ['inherits', 'abstract'],
+                    descendants: {
+                      by: 'group',
+                      attribute: 'name',
+                      throwIfCollision: false,
+                      throwIfMissing: false
+                    }
+                  };
+                });
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('object').that.has.all.keys(
@@ -464,7 +497,19 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(
-                argumentsNode, commandNode, groupBySpec, getTestOptions);
+                argumentsNode, commandNode, groupBySpec, (el) => {
+                  return {
+                    id: 'name',
+                    recurse: 'inherits',
+                    discards: ['inherits', 'abstract'],
+                    descendants: {
+                      by: 'group',
+                      attribute: 'name',
+                      throwIfCollision: false,
+                      throwIfMissing: false
+                    }
+                  };
+                });
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('object').that.has.all.keys(
@@ -521,7 +566,19 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(
-                argumentsNode, commandNode, groupBySpec, getTestOptions);
+                argumentsNode, commandNode, groupBySpec, (el) => {
+                  return {
+                    id: 'name',
+                    recurse: 'inherits',
+                    discards: ['inherits', 'abstract'],
+                    descendants: {
+                      by: 'group',
+                      attribute: 'name',
+                      throwIfCollision: false,
+                      throwIfMissing: false
+                    }
+                  };
+                });
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('object').that.has.all.keys('director');
@@ -571,7 +628,7 @@
             if (argumentsNode) {
               expect(() => {
                 Impl.buildElementWithSpec(argumentsNode, commandNode,
-                  groupBySpecThrows, getTestOptions);
+                  groupBySpecThrows, getTestOptionsThrows);
               }).to.throw();
             } else {
               assert.fail('Couldn\'t get Arguments node.');

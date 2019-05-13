@@ -20,7 +20,13 @@
     return {
       id: 'name',
       recurse: 'inherits',
-      discards: ['inherits', 'abstract']
+      discards: ['inherits', 'abstract'],
+      descendants: {
+        by: 'index',
+        attribute: 'name',
+        throwIfCollision: false,
+        throwIfMissing: false
+      }
     };
   };
 
@@ -135,7 +141,13 @@
 
           let element = Jaxine.buildElement(expressionNode, expressionsNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                attribute: 'name',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -171,7 +183,13 @@
 
           let source = Jaxine.buildElement(expressionNode, sourcesNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                attribute: 'name',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -209,7 +227,13 @@
 
           let source = Jaxine.buildElement(argumentNode, argumentsNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                attribute: 'name',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -248,7 +272,13 @@
 
           let tree = Jaxine.buildElement(treeNode, treesNode, (el) => {
             return {
-              id: 'alias'
+              id: 'alias',
+              descendants: {
+                by: 'index',
+                attribute: 'alias',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
