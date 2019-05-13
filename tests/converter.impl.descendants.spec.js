@@ -22,8 +22,7 @@
     labels: {
       element: '_',
       descendants: '_children',
-      text: '_text',
-      attribute: '_attributes'
+      text: '_text'
     },
     descendants: {
       by: 'index',
