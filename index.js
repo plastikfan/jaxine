@@ -4,5 +4,6 @@ module.exports = {
   specs: Converter.specs,
   buildElement: Converter.buildElement,
   buildElementWithSpec: Converter.buildElementWithSpec,
-  validateSpec: Converter.validateSpec
+  validateSpec: Converter.validateSpec,
+  validateOptions: Converter.validateOptions
 };

@@ -240,7 +240,7 @@ Given a string containing XML content containing text of different types (raw an
 
 ## The API
 
-Consists of functions: **buildElement**, **buildElementWithSpec**, **validateSpec** and a list of predefined spec objects: **specs**
+Consists of functions: **buildElement**, **buildElementWithSpec**, **validateSpec**, **validateOptions** and a list of predefined spec objects: **specs**
 
 ### buildElement
 
@@ -250,9 +250,13 @@ Consists of functions: **buildElement**, **buildElementWithSpec**, **validateSpe
 * _parentNode_: the parent node of _elementNode_
 * _getOptions_: a callback function which accepts a single argument of type string, which indicates the name of the
 element currently being built. This is invoked for all descendant elements and allows defining options on a per element type basis. The options returned by _getOptions_ can define the following members:
-  * _id_: The name of the attribute that serves as an identifier to distinguish elements of the same type
+  * _id_: The name of the attribute that serves as an identifier to distinguish elements of the same type. This is also the attribute used for index/group by (see descendants below)
   * _recurse_: The name of the attribute through which inheritance is invoked.
-  * _discards_: An array containing a list of strings defining the attributes which should be discarded an not be present on the resultant JSON representation.
+  * _discards_: An array containing a list of strings defining the attributes which should be discarded and not be present on the resultant JSON representation.
+  * _descendants_: (Sub-object, which can contain the following members):
+    * _by_: Determines how descendants are structured ("index" | "group"). By default, descendants will be stored as an array. Alternatively, they can be restructured into a map object where each descendant is keyed by the attribute. (when by = "index": value of attribute must be unique, when by = "group" then attribute value does not have to be unique. In this case, descendants with the same name will be grouped into an array). If not present, then index/group by function will not be executed and descendants will be built as an array not an indexable map.
+    * _throwIfCollision_: "throwIfCollision": If there are multiple child elements that have the same key value (descendants.attribute), then the groupBy/indexBy function will not be invoked and they will be returned as an array (and hence not indexable). If throwIfCollision is true, then an exception will be thrown (does not apply to groupBy/by="group")
+    * _throwIfMissing_: Similar to *throwIfCollision*, but an exception will be thrown if the child element does not contain the attribute as defined in descendants.attribute).
 
 The following shows an example using the **buildElement** function:
 
@@ -264,9 +268,25 @@ The following shows an example using the **buildElement** function:
     const jaxine = require('jaxine')
 
     const optionsMap = {
-      'DEFAULT': { id: 'name' },
-      'Command': { id: 'name', recurse: 'inherits', discards: ['inherits', 'abstract'] },
-      'Tree': { id: 'alias' }
+      'DEFAULT': { },
+      'Command': {
+        id: 'name',
+        recurse: 'inherits',
+        discards: ['inherits', 'abstract'],
+        descendants: {
+          by: 'index',
+          throwIfMissing: true,
+          throwIfCollision: true
+        }
+      },
+      'Tree': {
+        id: 'alias',
+        descendants: {
+          by: 'index',
+          throwIfMissing: true,
+          throwIfCollision: true
+        }
+      }
     };
 
     const getTestOptions = (el) => {
@@ -301,75 +321,43 @@ The following shows an example using the **buildElement** function:
 
 * The additional build options that come as part of the spec, apply to the root element (ie the element that
 build element is called upon) and the entire descendants tree that is derived from it. This is in contrast to
-_getOptions_, (explained above) which is invoked for all descendants of the the root element (not the document root).
+_getOptions_, (explained above) which is invoked for all descendants of the the root element.
 
-* Depending on the XML being processed, it may be necessary to use different spec objects for different parts of the
-document as required.
+* Depending on the XML being processed, it is highly likely that different options objects are used to parse different parts of the document as appropriate.
 
 ### buildElementWithSpec
 
-> buildElementWithSpec(elementNode, parentNode, getOptions, spec)
+> buildElementWithSpec(elementNode, parentNode, spec, getOptions)
 
 Is a [curried function](https://ramdajs.com/docs/#curry) which allows a custom _buildElementXXX_ function to be defined which is bound to a custom spec. This method should be used if the default spec is not to be used. The user can pass in one of the predefined _specs_ or can define their own.
 
 * _elementNode_: (**see buildElement**)
 * _parentNode_: (**see buildElement**)
-* _getOptions_: (**see buildElement**)
 * _spec_: Describes structure of the built JSON object and additional build options
+* _getOptions_: (**see buildElement**)
 
-### validateSpec
+### validateOptions
 
-Ensures that spec object is valid, throws if not. The user can invoke _validateSpec_ independently of building an element.
+> validateOptions(options)
 
-> validateSpec(spec)
+* _options_: The options object to validate
 
-* _spec_: The spec to validate
-
-## The Spec
-
-An example of the spec object is as follows:
+An example of the options object is as follows:
 
 ```javascript
 {
-    labels: {
-      element: '_',
-      descendants: '_children',
-      text: '_text',
-      attribute: '_attributes'
-    },
+    id: 'name',
+    recurse: 'inherits',
+    discards: ['abstract', 'describe']
     descendants: {
       by: 'group',
-      attribute: 'name',
       throwIfCollision: true,
       throwIfMissing: true
-    },
-    trim: true
+    }
 }
 ```
-:cyclone: (sub-object) labels:
 
-  :high_brightness: (string) element: The name of the property that stores the XML element name.
-
-  :high_brightness: (string) descendants: The name of the property holding descendant XML elements structure.
-(typically set to "_children")
-
-  :high_brightness: (string) text: The name of the property holding text local to the XML element as raw text or CDATA text. (typically set to "_text")
-
-  :high_brightness: (string) [optional] attribute: The name of the property that stores the attributes array.
-
-:cyclone: (sub-object) descendants:
-
-  :high_brightness: (string) by: Determines how descendants are structured ("index" | "group"). By default,_descendants_ will be stored as an array. Alternatively, they can be restructured into a map object where each descendant is keyed by the _attribute_. (when _by_ = "index": value of attribute must be unique, when _by_ = "group" then _attribute_ value does not have to be unique. In this case, descendants with the same name will be grouped into an array). See *indexBy* and *groupBy* sections below for more details.
-
-  :high_brightness: (string) attribute: The name of the attribute to index/group by.
-
-  :high_brightness: (boolean) [default:false] throwIfCollision: If there are multiple child elements that have the same key value (_descendants.attribute_), then the groupBy/indexBy function will not be invoked and they will be returned as an array (and hence not indexable). If _throwIfCollision_ is true, then an exception will be thrown (does not apply to groupBy/_by_="group").
-
-  :high_brightness: (boolean) [default:false] throwIfMissing: Similar to _throwIfCollision_, but an exception will be thrown if the child element does not contain the attribute as defined in _descendants.attribute_.
-
-:cyclone: (boolean) [default:true] trim: Removes leading and trailing spaces from element text.
-
-#### indexBy (descendants.by="index")
+#### indexBy **(descendants .by="index")**
 
 Given the following XML fragment:
 
@@ -382,7 +370,7 @@ Given the following XML fragment:
 </Arguments>
 ```
 
-using _spec.descendants.by_ = 'index' yields the following JSON:
+using **spec.descendants .by** = 'index' yields the following JSON:
 
 ```javascript
 {
@@ -409,7 +397,7 @@ using _spec.descendants.by_ = 'index' yields the following JSON:
 ```
 This shows that the _Arguments_ element contains a __children_ property which is a map object, keyed by the value of the spec.descendants.attribute, in this case "name". Note how the values of "name"s are indeed unique and map to their corresponding _ArgumentRef_ objects.
 
-#### groupBy (descendants.by="group")
+#### groupBy **(descendants .by="group")**
 
 Given the following XML fragment:
 
@@ -421,7 +409,7 @@ Given the following XML fragment:
 </Arguments>
 ```
 
-using _spec.descendants.by_ = 'group' yields the following JSON:
+using **spec.descendants .by** = 'group' yields the following JSON:
 
 ```javascript
 {
@@ -445,9 +433,9 @@ using _spec.descendants.by_ = 'group' yields the following JSON:
 ```
 This shows that the _Arguments_ element contains a __children_ property which is a map object, keyed by the value of the spec.descendants.attribute, in this case "name". This time however, the map object keys to an array which contains the collection of _ArgumentRef_ children which all have the attribute equal to that key, ie the "name" attribute. In this case, we can see that there are 2 children whose "name" attribute are identical ("director"), so they both appear in the array whose key is "director".
 
-#### descendants.by not specified
+#### **descendants.by** not specified
 
-Use a spec without descendants.by setting when having the children of a particular element being populated simply as an array, so for example, the following xml
+Use options without _descendants.by_ setting when having the children of a particular element being populated simply as an array, so for example, the following xml
 
 ```XML
 <Arguments>
@@ -476,24 +464,91 @@ yields the following JSON:
   }]
 }
 ```
-This shows that the _Arguments_ element contains a __children_ property which is simply an array containing all of the _ArgumentRef_ children of _Arguments_. This is the scheme used by the default spec.
+This shows that the _Arguments_ element contains a __children_ property which is simply an array containing all of the _ArgumentRef_ children of _Arguments_.
+
+### validateSpec
+
+Ensures that spec object is valid, throws if not. The user can invoke _validateSpec_ independently of building an element.
+
+> validateSpec(spec)
+
+* _spec_: The spec to validate
+
+:cyclone: (sub-object) descendants:
+
+  :high_brightness: (string) by: Determines how descendants are structured ("index" | "group"). By default,_descendants_ will be stored as an array. Alternatively, they can be restructured into a map object where each descendant is keyed by the _attribute_. (when _by_ = "index": value of attribute must be unique, when _by_ = "group" then _attribute_ value does not have to be unique. In this case, descendants with the same name will be grouped into an array). See *indexBy* and *groupBy* sections below for more details.
+
+  :high_brightness: (string) attribute: The name of the attribute to index/group by.
+
+  :high_brightness: (boolean) [default:false] throwIfCollision: If there are multiple child elements that have the same key value (_descendants.attribute_), then the groupBy/indexBy function will not be invoked and they will be returned as an array (and hence not indexable). If _throwIfCollision_ is true, then an exception will be thrown (does not apply to groupBy/_by_="group").
+
+  :high_brightness: (boolean) [default:false] throwIfMissing: Similar to _throwIfCollision_, but an exception will be thrown if the child element does not contain the attribute as defined in _descendants.attribute_.
+
+## The Spec
+
+An example of the spec object is as follows:
+
+```javascript
+{
+    labels: {
+      element: '_',
+      descendants: '_children',
+      text: '_text',
+      attributes: '_attributes'
+    },
+    trim: true
+}
+```
+:cyclone: (sub-object) labels:
+
+  :high_brightness: (string) element: The name of the property that stores the XML element name.
+
+  :high_brightness: (string) descendants: The name of the property holding descendant XML elements structure.
+(typically set to "_children")
+
+  :high_brightness: (string) text: The name of the property holding text local to the XML element as raw text or CDATA text. (typically set to "_text")
+
+  :high_brightness: (string) [optional] attributes: The name of the property that stores the attributes array.
+
+:cyclone: (boolean) [default:true] trim: Removes leading and trailing spaces from element text.
+
 
 #### Pre-defined specs
 
 ```javascript
 const jaxine = require('jaxine');
-const indexByNameSpec = jaxine.specs.indexByName;
+const attributesAsArraySpec = jaxine.specs.attributesAsArraySpec;
 
-jaxine.buildElementWithSpec( ..., indexByNameSpec);
+const optionsMap = {
+  'DEFAULT': { },
+  'Command': {
+    id: 'name',
+    recurse: 'inherits',
+    discards: ['inherits', 'abstract'],
+    descendants: {
+      by: 'index',
+      throwIfMissing: true,
+      throwIfCollision: true
+    }
+  }
+};
+
+const getOptions = (el) => {
+  return (optionsMap[el] || optionsMap['DEFAULT']);
+};
+
+jaxine.buildElementWithSpec( ..., attributesAsArraySpec, getOptions);
 
 ```
 
 #### Using the default spec
 
+The _buildElement_ function uses the default spec:
+
 ```javascript
 const jaxine = require('jaxine');
 
-jaxine.buildElement( ... );
+jaxine.buildElement( ..., getOptions);
 
 ```
 

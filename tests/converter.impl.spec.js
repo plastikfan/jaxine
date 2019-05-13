@@ -20,7 +20,12 @@
     return {
       id: 'name',
       recurse: 'inherits',
-      discards: ['inherits', 'abstract']
+      discards: ['inherits', 'abstract'],
+      descendants: {
+        by: 'index',
+        throwIfCollision: false,
+        throwIfMissing: false
+      }
     };
   };
 
@@ -135,7 +140,12 @@
 
           let element = Jaxine.buildElement(expressionNode, expressionsNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -171,7 +181,12 @@
 
           let source = Jaxine.buildElement(expressionNode, sourcesNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -209,7 +224,12 @@
 
           let source = Jaxine.buildElement(argumentNode, argumentsNode, (el) => {
             return {
-              id: 'name'
+              id: 'name',
+              descendants: {
+                by: 'index',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -248,7 +268,12 @@
 
           let tree = Jaxine.buildElement(treeNode, treesNode, (el) => {
             return {
-              id: 'alias'
+              id: 'alias',
+              descendants: {
+                by: 'index',
+                throwIfCollision: false,
+                throwIfMissing: false
+              }
             };
           });
 
@@ -884,7 +909,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT');
         } else {
@@ -909,7 +934,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('.SOME-CDATA-TEXT');
         } else {
@@ -934,7 +959,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT.SOME-CDATA-TEXT');
         } else {
@@ -959,7 +984,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('SOME-RAW-TEXT.SOME-CDATA-TEXT.SOME-MORE-CDATA-TEXT');
         } else {
@@ -986,7 +1011,7 @@
           '/Application/Expressions[@name="content-expressions"]/Expression/Pattern[@eg="TEXT"]', document);
 
         if (patternNode) {
-          let result = Impl.composeText(patternNode, defaultSpec);
+          let result = Impl.composeText(defaultSpec, patternNode);
 
           expect(result).to.equal('.SOME-CDATA-TEXT');
         } else {
@@ -1040,80 +1065,6 @@
             descendants: '_children'
           }
         }
-      },
-      {
-        given: 'spec with "descendants" and invalid "by"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text',
-            attribute: '_attributes'
-          },
-          descendants: {
-            by: 'RUBBISH',
-            attribute: 'name'
-          }
-        }
-      },
-      {
-        given: 'spec with "descendants" and missing "descendants.attribute"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text',
-            attribute: '_attributes'
-          },
-          descendants: {
-            by: 'index'
-          }
-        }
-      },
-      {
-        given: 'spec with invalid "throwIfCollision"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          descendants: {
-            by: 'index',
-            attribute: 'name',
-            throwIfCollision: 'blah'
-          }
-        }
-      },
-      {
-        given: 'spec with "throwIfCollision" enabled and descendants.by="group"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          descendants: {
-            by: 'group',
-            attribute: 'name',
-            throwIfCollision: true
-          }
-        }
-      },
-      {
-        given: 'spec with invalid "throwIfMissing"',
-        spec: {
-          labels: {
-            element: '_',
-            descendants: '_children',
-            text: '_text'
-          },
-          descendants: {
-            by: 'index',
-            attribute: 'name',
-            throwIfMissing: 'blah'
-          }
-        }
       }];
 
       tests.forEach((t) => {
@@ -1128,6 +1079,65 @@
     });
   }); // converter.impl:validateSpec
 
+  describe('converter.impl:validateOptions', () => {
+    context('Invalid options', () => {
+      const tests = [{
+        given: 'options with "descendants" and invalid "by"',
+        options: {
+          descendants: {
+            by: 'RUBBISH',
+            attribute: 'name'
+          }
+        }
+      },
+      {
+        given: 'options with "descendants" and missing "descendants.attribute"',
+        options: {
+          descendants: {
+            by: 'index'
+          }
+        }
+      }, {
+        given: 'options with invalid "throwIfCollision"',
+        options: {
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfCollision: 'blah'
+          }
+        }
+      }, {
+        given: 'options with "throwIfCollision" enabled and descendants.by="group"',
+        options: {
+          descendants: {
+            by: 'group',
+            attribute: 'name',
+            throwIfCollision: true
+          }
+        }
+      }, {
+        given: 'options with invalid "throwIfMissing"',
+        options: {
+          descendants: {
+            by: 'index',
+            attribute: 'name',
+            throwIfMissing: 'blah'
+          }
+        }
+      }];
+
+      tests.forEach((t) => {
+        context(`given: ${t.given}`, () => {
+          it('should: throw', () => {
+            expect(() => {
+              Impl.validateOptions(t.options);
+            }).to.throw();
+          });
+        });
+      });
+    });
+  }); // converter.impl:validateOptions
+
   describe('converter.impl.buildLocalAttributes', () => {
     const spec = Object.freeze({
       labels: {
@@ -1135,12 +1145,6 @@
         descendants: '_children',
         text: '_text',
         attributes: '_attributes'
-      },
-      descendants: {
-        by: 'index',
-        attribute: 'name',
-        throwIfMissing: true,
-        throwIfCollision: true
       },
       trim: true
     });
@@ -1165,7 +1169,7 @@
           const directoryNode = XHelpers.selectElementNodeById(
             'Directory', 'name', 'archive', applicationNode) || {};
           const directory = Jaxine.buildElementWithSpec(directoryNode, applicationNode,
-            getTestOptions, spec);
+            spec, getTestOptions);
 
           expect(R.has('_attributes')(directory));
           const attributes = R.prop('_attributes')(directory);
