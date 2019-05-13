@@ -1165,7 +1165,7 @@
           const directoryNode = XHelpers.selectElementNodeById(
             'Directory', 'name', 'archive', applicationNode) || {};
           const directory = Jaxine.buildElementWithSpec(directoryNode, applicationNode,
-            getTestOptions, spec);
+            spec, getTestOptions);
 
           expect(R.has('_attributes')(directory));
           const attributes = R.prop('_attributes')(directory);
