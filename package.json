@@ -1,6 +1,6 @@
 {
   "name": "jaxine",
-  "version": "1.0.6",
+  "version": "2.0.1",
   "description": "Another JSON to XML converter with inheritable attributes and custom element consolidation",
   "main": "index.js",
   "scripts": {
