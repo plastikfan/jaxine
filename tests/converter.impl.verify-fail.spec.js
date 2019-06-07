@@ -41,7 +41,6 @@
             })(baseSpec);
           }
         },
-
         {
           given: 'collection matcher with invalid "delim" defined',
           spec: () => {
@@ -56,7 +55,6 @@
             })(baseSpec);
           }
         },
-
         {
           given: 'collection matcher with null "delim" defined',
           spec: () => {
@@ -65,6 +63,49 @@
                 matchers: {
                   collection: {
                     delim: null
+                  }
+                }
+              }
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'date matcher with invalid "format" defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              attributes: {
+                matchers: {
+                  date: {
+                    format: 666
+                  }
+                }
+              }
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'symbol matcher with invalid "prefix" defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              attributes: {
+                matchers: {
+                  symbol: {
+                    prefix: 666
+                  }
+                }
+              }
+            })(baseSpec);
+          }
+        },
+
+        {
+          given: 'symbol matcher with invalid "global" defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              attributes: {
+                matchers: {
+                  symbol: {
+                    global: 666
                   }
                 }
               }
