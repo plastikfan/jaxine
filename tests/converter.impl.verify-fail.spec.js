@@ -41,6 +41,7 @@
             })(baseSpec);
           }
         },
+
         {
           given: 'collection matcher with invalid "delim" defined',
           spec: () => {
@@ -54,7 +55,23 @@
               }
             })(baseSpec);
           }
+        },
+
+        {
+          given: 'collection matcher with null "delim" defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              attributes: {
+                matchers: {
+                  collection: {
+                    delim: null
+                  }
+                }
+              }
+            })(baseSpec);
+          }
         }
+
         // {
         //   given: 'collection matcher with invalid "delim" defined',
         //   spec: () => {
