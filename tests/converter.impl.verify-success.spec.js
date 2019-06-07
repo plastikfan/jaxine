@@ -32,6 +32,18 @@
         {
           given: 'spec without coercion property',
           spec: () => baseSpec
+        },
+        {
+          given: 'matchers with valid primitives("number", "boolean") defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              attributes: {
+                matchers: {
+                  primitives: ['number', 'boolean']
+                }
+              }
+            })(baseSpec);
+          }
         }
       ];
 

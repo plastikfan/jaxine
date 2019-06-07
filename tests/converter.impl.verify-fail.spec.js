@@ -28,6 +28,18 @@
               }
             })(baseSpec);
           }
+        },
+        {
+          given: 'matchers containing invalid primitives("blah") defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              attributes: {
+                matchers: {
+                  primitives: ['blah', 'number', 'boolean']
+                }
+              }
+            })(baseSpec);
+          }
         }
       ];
 
