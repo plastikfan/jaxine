@@ -40,7 +40,43 @@
               }
             })(baseSpec);
           }
+        },
+        {
+          given: 'collection matcher with invalid "delim" defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              attributes: {
+                matchers: {
+                  collection: {
+                    delim: 666
+                  }
+                }
+              }
+            })(baseSpec);
+          }
         }
+        // {
+        //   given: 'collection matcher with invalid "delim" defined',
+        //   spec: () => {
+        //     return R.set(R.lensProp('coercion'), {
+        //       attributes: {
+        //         matchers: {
+        //           collection: {
+        //             delim: ',',
+        //             open: '!<[]>[',
+        //             close: ']',
+        //             throwIfMatchFails: false,
+        //             payload: {
+        //               delim: '=',
+        //               valuetype: 'primitive'
+        //             }
+        //           }
+        //         }
+        //       }
+        //     })(baseSpec);
+        //   }
+        // }
+
       ];
 
       R.forEach((t) => {
