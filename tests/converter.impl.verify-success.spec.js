@@ -8,7 +8,9 @@
   const R = require('ramda');
   const Impl = require('../lib/converter.impl');
 
-  describe('converter.impl:validateOptions [coerce]', () => {
+  // THIS FILE IS PROBABLY NO LONGER REQUIRED
+
+  describe.skip('converter.impl:validateOptions [coerce]', () => {
     const baseSpec = {
       labels: {
         element: '_',

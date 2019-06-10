@@ -4,20 +4,36 @@
   const chai = require('chai');
   chai.use(require('dirty-chai'));
   const expect = chai.expect;
+  const assert = chai.assert;
   const R = require('ramda');
 
+  const converter = require('../lib/converter');
   const Impl = require('../lib/converter.impl');
 
   describe('converter.impl:validateOptions [coerce]', () => {
-    const baseSpec = {
-      labels: {
-        element: '_',
-        descendants: '_children',
-        text: '_text'
-      }
-    };
+    context('pre-defined specs coercion validation', () => {
+      const specs = converter.specs;
+
+      R.forEach((s) => {
+        it(`should: not fail validation, given: valid default spec`, () => {
+          try {
+            Impl.validateSpec(s);
+          } catch (err) {
+            assert.fail(err.message);
+          }
+        });
+      })(specs);
+    });
 
     context('Invalid coercion options', () => {
+      const baseSpec = {
+        labels: {
+          element: '_',
+          descendants: '_children',
+          text: '_text'
+        }
+      };
+
       const tests = [
         {
           given: 'coercion with typo in "trim" property',
@@ -97,7 +113,6 @@
             })(baseSpec);
           }
         },
-
         {
           given: 'symbol matcher with invalid "global" defined',
           spec: () => {
@@ -111,30 +126,121 @@
               }
             })(baseSpec);
           }
+        },
+        {
+          given: 'invalid matcher order, with "string" not defined as last matcher',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              attributes: {
+                matchers: {
+                  string: true,
+                  symbol: {
+                    prefix: '$',
+                    global: true
+                  }
+                }
+              }
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'textNodes defined as a string',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              textNodes: 'invalid textNode(can\'t be a string'
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'textNodes.trim defined as a string',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              textNodes: {
+                trim: 'trim can\'be a string'
+              }
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'textNodes.fallback defined as a string',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              textNodes: {
+                fallback: 'fallback can\'be a string'
+              }
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'textNodes.matchers.collection.delim defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              textNodes: {
+                matchers: {
+                  collection: {
+                    delim: '?'
+                  }
+                }
+              }
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'textNodes.matchers.collection.open defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              textNodes: {
+                matchers: {
+                  collection: {
+                    open: '?'
+                  }
+                }
+              }
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'textNodes.matchers.collection.close defined',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              textNodes: {
+                matchers: {
+                  collection: {
+                    close: '?'
+                  }
+                }
+              }
+            })(baseSpec);
+          }
+        },
+        {
+          given: 'invalid matcher order, with "string" not defined as last matcher',
+          spec: () => {
+            return R.set(R.lensProp('coercion'), {
+              textNodes: {
+                matchers: {
+                  string: true,
+                  symbol: {
+                    prefix: '$',
+                    global: true
+                  }
+                }
+              }
+            })(baseSpec);
+          }
         }
-
         // {
-        //   given: 'collection matcher with invalid "delim" defined',
+        //   given: 'textNodes.matchers.date defined',
         //   spec: () => {
         //     return R.set(R.lensProp('coercion'), {
-        //       attributes: {
+        //       textNodes: {
         //         matchers: {
-        //           collection: {
-        //             delim: ',',
-        //             open: '!<[]>[',
-        //             close: ']',
-        //             throwIfMatchFails: false,
-        //             payload: {
-        //               delim: '=',
-        //               valuetype: 'primitive'
-        //             }
-        //           }
+        //           date: '?'
         //         }
         //       }
         //     })(baseSpec);
         //   }
         // }
-
       ];
 
       R.forEach((t) => {
