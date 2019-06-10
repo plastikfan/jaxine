@@ -1185,6 +1185,122 @@
       });
     });
   });
+
+  describe('convert.impl.fetchCoercionOption', () => {
+    const baseSpec = Object.freeze({
+      name: 'full-spec-test',
+      labels: {
+        element: '_',
+        descendants: '_children',
+        text: '_text'
+      },
+      coercion: {
+        attributes: {
+          trim: true,
+          matchers: {
+            primitives: ['number', 'boolean'],
+            collection: {
+              delim: ',',
+              open: '!<[]>[',
+              close: ']',
+              throwIfMatchFails: false,
+              payload: {
+                delim: '=',
+                valuetype: 'primitive'
+              }
+            },
+            date: {
+              format: 'yyyy-mm-dd'
+            },
+            symbol: {
+              prefix: '$',
+              global: true
+            },
+            string: true
+          }
+        },
+        textNodes: {
+          trim: true,
+          fallback: true, // if option not found under textNode, then look in attributes
+          matchers: {
+            collection: {
+              // The following properties are not appropriate for textNodes, because the
+              // constituents are already natively split: "delim", "open", "close"
+              //
+              payload: {
+                delim: '=', // required for map types (key/value pair) collection types
+                // valuetype: primitive or any of the other matchers except collection
+                //
+                valuetype: 'primitive'
+              }
+            },
+            date: {
+              format: 'dd-mm-yyyy'
+            },
+            symbol: {
+              prefix: '$',
+              global: true
+            },
+            string: true // if false, then throw; defaults to true
+          }
+        }
+      }
+    });
+
+    context('given: retrieve value', () => {
+      const tests = [
+        {
+          should: 'textNodes.trim defined as "false" overriding attributes.trim',
+          context: 'textNodes',
+          path: 'coercion/textNodes/trim',
+          expectedValue: false,
+          spec: () => {
+            return R.set(R.lensPath(['coercion', 'textNodes']),
+              {
+                trim: false
+              }
+            )(baseSpec);
+          }
+        },
+        {
+          should: 'textNodes.trim missing and textNodes.fallback = "true"',
+          context: 'textNodes',
+          path: 'coercion/textNodes/trim',
+          expectedValue: true,
+          spec: () => {
+            return R.set(R.lensPath(['coercion', 'textNodes']), {
+              fallback: true
+            })(baseSpec);
+          }
+        },
+        {
+          should: 'textNodes.matchers.date.format missing and textNodes.fallback = "true"',
+          context: 'textNodes',
+          path: 'coercion/textNodes/matchers/date/format',
+          expectedValue: 'dd-mm-yyyy',
+          spec: () => {
+            return R.set(
+              R.lensPath(['coercion', 'textNodes', 'fallback']), true)(baseSpec);
+          }
+        }
+      ];
+
+      R.forEach((t) => {
+        it(`should: ${t.should}`, () => {
+          const result = Impl.fetchCoercionOption(t.context, t.path, t.spec());
+          expect(result).to.be.equal(t.expectedValue);
+        });
+      })(tests);
+    });
+
+    context('given: invalid request for a property not applicable in "textNodes" context', () => {
+      it('should: throw', () => [
+        expect(() => {
+          Impl.fetchCoercionOption('textNodes', 'coercion/textNodes/matchers/collection/delim', baseSpec);
+        }).to.throw()
+      ]);
+    });
+  }); // convert.impl.fetchCoercionOption
 })();
 
 /* eslint-disable no-useless-escape */
