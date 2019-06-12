@@ -15,6 +15,7 @@
   const Helpers = require('./test-helpers');
   const Jaxine = require('../lib/converter');
   const Impl = require('../lib/converter.impl');
+  const { functify } = require('jinxed');
 
   const getTestOptions = (el) => {
     return {
@@ -54,7 +55,7 @@
             'type': R.equals('native')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -87,7 +88,7 @@
             'type': R.equals('native')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -154,7 +155,7 @@
             'eg': R.equals('Mick Mars')
           })(element), element);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(element));
         } else {
           assert.fail('Couldn\'t get Expressions node.');
         }
@@ -195,7 +196,7 @@
             'provider': R.equals('json-provider')
           })(source), source);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(source));
         } else {
           assert.fail('Couldn\'t get Sources node.');
         }
@@ -236,10 +237,10 @@
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('filesys'),
             'alias': R.equals('fs'),
-            'optional': R.equals('true')
+            'optional': R.equals(true)
           })(source), source);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(source));
         } else {
           assert.fail('Couldn\'t get Arguments node.');
         }
@@ -282,7 +283,7 @@
             'root': R.equals('/Volumes/Epsilon/Skipa')
           })(tree), tree);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(tree));
         } else {
           assert.fail('Couldn\'t get Trees node.');
         }
@@ -316,7 +317,7 @@
               'type': R.equals('native')
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           } else {
             assert.fail('Couldn\'t get Commands node.');
           }
@@ -349,7 +350,7 @@
               'type': R.equals('native')
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           } else {
             assert.fail('Couldn\'t get Commands node.');
           }
@@ -383,7 +384,7 @@
               'filter': R.equals('beta')
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           } else {
             assert.fail('Couldn\'t get Commands node.');
           }
@@ -418,7 +419,7 @@
             'filter': R.equals('beta')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -456,7 +457,7 @@
             'theme': R.equals('concept')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -489,7 +490,7 @@
             'filter': R.equals('leaf-filter')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -527,7 +528,7 @@
             'theme': R.equals('concept')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -565,7 +566,7 @@
             'theme': R.equals('concept')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -600,7 +601,7 @@
             'mode': R.equals('auto')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -715,7 +716,7 @@
               '_children': R.is(Array)
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           });
 
           it('should: return a command object where no of children is 4', () => {
@@ -775,7 +776,7 @@
               '_children': R.is(Array)
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           });
 
           it('should: return a command object where no of children is 3', () => {
@@ -835,7 +836,7 @@
               '_children': R.is(Array)
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           });
 
           it('return a command object with all 3 children attached', () => {
@@ -876,7 +877,7 @@
             'name': R.equals('meta-prefix-expression')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Expressions node.');
         }
@@ -1203,7 +1204,6 @@
               delim: ',',
               open: '!<[]>[',
               close: ']',
-              throwIfMatchFails: false,
               payload: {
                 delim: '=',
                 valuetype: 'primitive'
@@ -1264,7 +1264,6 @@
         },
         {
           should: 'textNodes.trim missing and textNodes.fallback = "true"',
-          context: 'textNodes',
           path: 'coercion/textNodes/trim',
           expectedValue: true,
           spec: () => {
@@ -1275,7 +1274,6 @@
         },
         {
           should: 'textNodes.matchers.date.format missing and textNodes.fallback = "true"',
-          context: 'textNodes',
           path: 'coercion/textNodes/matchers/date/format',
           expectedValue: 'dd-mm-yyyy',
           spec: () => {
@@ -1287,7 +1285,7 @@
 
       R.forEach((t) => {
         it(`should: ${t.should}`, () => {
-          const result = Impl.fetchCoercionOption(t.context, t.path, t.spec());
+          const result = Impl.fetchCoercionOption(t.path, t.spec());
           expect(result).to.be.equal(t.expectedValue);
         });
       })(tests);
@@ -1296,7 +1294,7 @@
     context('given: invalid request for a property not applicable in "textNodes" context', () => {
       it('should: throw', () => [
         expect(() => {
-          Impl.fetchCoercionOption('textNodes', 'coercion/textNodes/matchers/collection/delim', baseSpec);
+          Impl.fetchCoercionOption('coercion/textNodes/matchers/collection/delim', baseSpec);
         }).to.throw()
       ]);
     });

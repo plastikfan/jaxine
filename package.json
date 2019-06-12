@@ -42,6 +42,7 @@
   "homepage": "https://github.com/plastikfan/jaxine#readme",
   "dependencies": {
     "jinxed": "0.0.1",
+    "moment": "^2.24.0",
     "ramda": "^0.26.1",
     "xmldom": "^0.1.27",
     "xpath": "0.0.27"
