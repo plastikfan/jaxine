@@ -1210,7 +1210,7 @@
               }
             },
             date: {
-              format: 'yyyy-mm-dd'
+              format: 'YYYY-MM-DD'
             },
             symbol: {
               prefix: '$',
@@ -1235,7 +1235,7 @@
               }
             },
             date: {
-              format: 'dd-mm-yyyy'
+              format: 'YYYY-MM-DD'
             },
             symbol: {
               prefix: '$',
@@ -1261,26 +1261,26 @@
               }
             )(baseSpec);
           }
-        },
-        {
-          should: 'textNodes.trim missing and textNodes.fallback = "true"',
-          path: 'coercion/textNodes/trim',
-          expectedValue: true,
-          spec: () => {
-            return R.set(R.lensPath(['coercion', 'textNodes']), {
-              fallback: true
-            })(baseSpec);
-          }
-        },
-        {
-          should: 'textNodes.matchers.date.format missing and textNodes.fallback = "true"',
-          path: 'coercion/textNodes/matchers/date/format',
-          expectedValue: 'dd-mm-yyyy',
-          spec: () => {
-            return R.set(
-              R.lensPath(['coercion', 'textNodes', 'fallback']), true)(baseSpec);
-          }
         }
+        // {
+        //   should: 'textNodes.trim missing and textNodes.fallback = "true"',
+        //   path: 'coercion/textNodes/trim',
+        //   expectedValue: true,
+        //   spec: () => {
+        //     return R.set(R.lensPath(['coercion', 'textNodes']), {
+        //       fallback: true
+        //     })(baseSpec);
+        //   }
+        // },
+        // {
+        //   should: 'textNodes.matchers.date.format missing and textNodes.fallback = "true"',
+        //   path: 'coercion/textNodes/matchers/date/format',
+        //   expectedValue: 'dd-mm-yyyy',
+        //   spec: () => {
+        //     return R.set(
+        //       R.lensPath(['coercion', 'textNodes', 'fallback']), true)(baseSpec);
+        //   }
+        // }
       ];
 
       R.forEach((t) => {
@@ -1299,6 +1299,176 @@
       ]);
     });
   }); // convert.impl.fetchCoercionOption
+
+  describe('convert.impl [transforms]', () => {
+    const testSpec = {
+      name: 'test-spec-with-attributes',
+      labels: {
+        element: '_',
+        descendants: '_children',
+        text: '_text'
+      },
+      coercion: {
+        attributes: {
+          trim: true,
+          matchers: {
+            primitives: ['number', 'boolean'],
+            collection: {
+              delim: ',',
+              open: '!<[]>[',
+              close: ']',
+              payload: {
+                delim: '=',
+                valuetype: 'primitive'
+              }
+            },
+            date: {
+              format: 'YYYY-MM-DD'
+            },
+            symbol: {
+              prefix: '$',
+              global: true
+            },
+            string: true
+          }
+        }
+      }
+    };
+
+    const tests = [
+      // ['number]
+      {
+        given: 'spec with "attributes/matchers/primitives" = number',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['number'])(testSpec);
+        },
+        valueType: 'number',
+        raw: 42,
+        expected: 42
+      },
+      // ['boolean']
+      {
+        given: 'spec with "attributes/matchers/primitives" = boolean, value=true',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['boolean'])(testSpec);
+        },
+        valueType: 'boolean',
+        raw: true,
+        expected: true
+      },
+      {
+        given: 'spec with "attributes/matchers/primitives" = boolean, value=false',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['boolean'])(testSpec);
+        },
+        valueType: 'boolean',
+        raw: false,
+        expected: false
+      },
+      {
+        given: 'spec with "attributes/matchers/primitives" = boolean, value(string)="true"',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['boolean'])(testSpec);
+        },
+        valueType: 'boolean',
+        raw: 'true',
+        expected: true
+      },
+      {
+        given: 'spec with "attributes/matchers/primitives" = boolean, value(string)="false"',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['boolean'])(testSpec);
+        },
+        valueType: 'boolean',
+        raw: 'false',
+        expected: false
+      },
+      // ['string']
+      {
+        given: 'spec with "attributes/matchers" = string(true)',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers']), {
+            string: true
+          })(testSpec);
+        },
+        valueType: 'string',
+        raw: 'foo',
+        expected: 'foo'
+      }
+    ];
+
+    tests.forEach((t) => {
+      context(`given: ${t.given}`, () => {
+        it(`should: coerce "${t.valueType}" value ok`, () => {
+          try {
+            const result = Impl.getMatcher(t.valueType)(t.raw, t.context, t.spec());
+            expect(result.succeeded).to.be.true(`succeeded RESULT: ${result.succeeded}`);
+            expect(result.value).to.equal(t.expected);
+          } catch (error) {
+            assert.fail(`transform function for type: "${t.valueType}" failed. (${error})`);
+          }
+        });
+      });
+    });
+
+    context('given: spec with "attributes/matchers/primitives" = date', () => {
+      it('should: coerce "date" value ok:', () => {
+        try {
+          const dateValue = '2016-06-23';
+          const result = Impl.getMatcher('date')(dateValue, 'attributes', testSpec);
+          expect(result.succeeded).to.be.true(`succeeded RESULT: ${result.succeeded}`);
+          expect(result.value.format('YYYY-MM-DD')).to.equal('2016-06-23');
+        } catch (error) {
+          assert.fail(`transform function for type: "date" failed. (${error})`);
+        }
+      });
+    });
+
+    context('given: spec with "attributes/matchers/primitives" = symbol', () => {
+      it('should coerce "symbol" value ok:', () => {
+        try {
+          const symbolValue = '$excalibur';
+          const symbolExpected = Symbol(symbolValue);
+          const result = Impl.getMatcher('symbol')(symbolValue, 'attributes', testSpec);
+          expect(result.succeeded).to.be.true(`succeeded RESULT: ${result.succeeded}`);
+          expect(R.is(Symbol)(result.value)).to.be.true();
+          expect(result.value.toString()).to.equal(symbolExpected.toString());
+        } catch (error) {
+          assert.fail(`transform function for type: "symbol" failed. (${error})`);
+        }
+      });
+    });
+
+    context('given: spec with "attributes/matchers" = string(false)', () => {
+      it('should coerce "string" value ok:', () => {
+        try {
+          const spec = R.set(R.lensPath(['coercion', 'attributes', 'matchers']), {
+            string: false
+          })(testSpec);
+
+          expect(() => {
+            Impl.getMatcher('string')('foo', 'attributes', spec);
+          }).to.throw();
+        } catch (error) {
+          assert.fail(`transform function for type: "string" failed. (${error})`);
+        }
+      });
+    });
+  }); // convert.impl [transforms]
+
+  describe('date transform function', () => {
+  });
 })();
 
 /* eslint-disable no-useless-escape */
