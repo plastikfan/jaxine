@@ -229,18 +229,6 @@
             })(baseSpec);
           }
         }
-        // {
-        //   given: 'textNodes.matchers.date defined',
-        //   spec: () => {
-        //     return R.set(R.lensProp('coercion'), {
-        //       textNodes: {
-        //         matchers: {
-        //           date: '?'
-        //         }
-        //       }
-        //     })(baseSpec);
-        //   }
-        // }
       ];
 
       R.forEach((t) => {
