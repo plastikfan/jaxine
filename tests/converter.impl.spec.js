@@ -1201,7 +1201,7 @@
           primitives: ['number', 'boolean'],
           collection: {
             delim: ',',
-            open: '!<[]>[',
+            open: '!<[<type>]>[',
             close: ']',
             payload: {
               delim: '=',
@@ -1353,6 +1353,56 @@
       });
     });
   }); // convert.impl [transforms]
+
+  describe('convert.impl for "attributes" context [transformCollection]', () => {
+    context(`given: a compound value`, () => {
+      const transformCollection = Impl.getMatcher('collection');
+
+      // it(`transformCollection (using default spec) should: coerce as a single item array`, () => {
+      //   const result = transformCollection('!<[]>[foo]', 'attributes', testSpec);
+
+      //   expect(result.succeeded).to.be.true(functify(result));
+      //   expect(result.value).to.deep.equal(['foo'], functify(result));
+      // });
+
+      // it(`transformCollection (using default spec) should: coerce as a multiple item string array`, () => {
+      //   const result = transformCollection('!<[]>[foo,bar,baz]', 'attributes', testSpec);
+
+      //   expect(result.succeeded).to.be.true(functify(result));
+      //   expect(result.value).to.deep.equal(['foo', 'bar', 'baz'], functify(result));
+      // });
+
+      // it(`transformCollection (using default spec) should: coerce as a multiple item numeric array`, () => {
+      //   const result = transformCollection('!<[]>[1,2,3,4]', 'attributes', testSpec);
+
+      //   expect(result.succeeded).to.be.true(functify(result));
+      //   expect(result.value).to.deep.equal([1, 2, 3, 4], functify(result));
+      // });
+
+      // it(`transformCollection (using default spec) should: coerce as a multiple item boolean array`, () => {
+      //   const result = transformCollection('!<[]>[true,false,true,false]', 'attributes', testSpec);
+
+      //   expect(result.succeeded).to.be.true(functify(result));
+      //   expect(result.value).to.deep.equal([true, false, true, false], functify(result));
+      // });
+
+      // it(`transformCollection (using default spec) should: coerce as a multiple item mix-type array`, () => {
+      //   const result = transformCollection('!<[]>[one,42,true,foo]', 'attributes', testSpec);
+
+      //   expect(result.succeeded).to.be.true(functify(result));
+      //   expect(result.value).to.deep.equal(['one', 42, true, 'foo'], functify(result));
+      // });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Int8Array array`, () => {
+        const spec = R.set(R.lensPath(
+          ['coercion', 'attributes', 'matchers', 'collection', 'open'])('!<type>['))(testSpec);
+        const result = transformCollection('!<Int8Array>[1,2,3,4]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value).to.deep.equal(Int8Array.from([1, 2, 3, 4]), functify(result));
+      });
+    });
+  }); // convert.impl for "attributes" context [transformCollection]
 
   describe('convert.impl for "textNodes" context [transforms]', () => {
     context('given: invalid request for a property not applicable in "textNodes" context', () => {
