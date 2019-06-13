@@ -162,16 +162,6 @@
           }
         },
         {
-          given: 'textNodes.fallback defined as a string',
-          spec: () => {
-            return R.set(R.lensProp('coercion'), {
-              textNodes: {
-                fallback: 'fallback can\'be a string'
-              }
-            })(baseSpec);
-          }
-        },
-        {
           given: 'textNodes.matchers.collection.delim defined',
           spec: () => {
             return R.set(R.lensProp('coercion'), {
