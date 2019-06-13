@@ -1203,9 +1203,9 @@
             delim: ',',
             open: '!<type>[',
             close: ']',
-            payload: {
+            assoc: {
               delim: '=',
-              valuetype: 'primitive'
+              valuetype: 'string'
             }
           },
           date: {
@@ -1372,7 +1372,7 @@
   describe('convert.impl for "attributes" context [transformCollection]', () => {
     context(`given: a compound value`, () => {
       const transformCollection = Impl.getMatcher('collection');
-
+      // []
       it(`transformCollection (using default spec) should: coerce as a single item array`, () => {
         const result = transformCollection('!<[]>[foo]', 'attributes', testSpec);
 
@@ -1407,7 +1407,7 @@
         expect(result.succeeded).to.be.true(functify(result));
         expect(result.value).to.deep.equal(['one', 42, true, 'foo'], functify(result));
       });
-
+      // [TypedArrays]
       it(`transformCollection (using default spec) should: coerce as a multiple item Int8Array array`, () => {
         const spec = R.set(R.lensPath(
           ['coercion', 'attributes', 'matchers', 'collection', 'open'])('!<type>['))(testSpec);
@@ -1425,7 +1425,7 @@
         expect(result.succeeded).to.be.true(functify(result));
         expect(result.value).to.deep.equal(Uint8Array.from([1, 2, 3, 4]), functify(result));
       });
-
+      // [Set]
       it(`transformCollection (using default spec) should: coerce as a multiple item Set`, () => {
         const spec = R.set(R.lensPath(
           ['coercion', 'attributes', 'matchers', 'collection', 'open'])('!<type>['))(testSpec);
@@ -1434,6 +1434,48 @@
 
         expect(result.succeeded).to.be.true(functify(result));
         expect(result.value.size).to.be.equal(expectedSet.size);
+      });
+      // [Map]
+      it(`transformCollection (using default spec) should: coerce as a single item map`, () => {
+        const spec = R.set(R.lensPath(
+          ['coercion', 'attributes', 'matchers', 'collection', 'assoc'])({
+          delim: '=',
+          valuetype: 'string'
+        }))(testSpec);
+
+        const result = transformCollection('!<Map>[foo=bar]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value.size).to.equal(1, functify(result));
+        expect(result.value.get('foo')).to.equal('bar', functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item map`, () => {
+        const spec = R.set(R.lensPath(
+          ['coercion', 'attributes', 'matchers', 'collection', 'assoc'])({
+          delim: '=',
+          valuetype: 'string'
+        }))(testSpec);
+
+        const result = transformCollection('!<Map>[a=one,b=two,c=three]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value.size).to.equal(3, functify(result));
+        expect(result.value.get('a')).to.equal('one', functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Object`, () => {
+        const spec = R.set(R.lensPath(
+          ['coercion', 'attributes', 'matchers', 'collection', 'assoc'])({
+          delim: '=',
+          valuetype: 'string'
+        }))(testSpec);
+
+        const result = transformCollection('!<Object>[a=one,b=two,c=three]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(R.keys(result.value).length).to.equal(3, functify(result));
+        expect(result.value['a']).to.equal('one', functify(result));
       });
     });
   }); // convert.impl for "attributes" context [transformCollection]
