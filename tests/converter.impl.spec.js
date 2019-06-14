@@ -15,6 +15,7 @@
   const Helpers = require('./test-helpers');
   const Jaxine = require('../lib/converter');
   const Impl = require('../lib/converter.impl');
+  const { functify } = require('jinxed');
 
   const getTestOptions = (el) => {
     return {
@@ -54,7 +55,7 @@
             'type': R.equals('native')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -87,7 +88,7 @@
             'type': R.equals('native')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -154,7 +155,7 @@
             'eg': R.equals('Mick Mars')
           })(element), element);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(element));
         } else {
           assert.fail('Couldn\'t get Expressions node.');
         }
@@ -195,7 +196,7 @@
             'provider': R.equals('json-provider')
           })(source), source);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(source));
         } else {
           assert.fail('Couldn\'t get Sources node.');
         }
@@ -236,10 +237,10 @@
           let result = Helpers.logIfFailedStringify(R.where({
             'name': R.equals('filesys'),
             'alias': R.equals('fs'),
-            'optional': R.equals('true')
+            'optional': R.equals(true)
           })(source), source);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(source));
         } else {
           assert.fail('Couldn\'t get Arguments node.');
         }
@@ -282,7 +283,7 @@
             'root': R.equals('/Volumes/Epsilon/Skipa')
           })(tree), tree);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(tree));
         } else {
           assert.fail('Couldn\'t get Trees node.');
         }
@@ -316,7 +317,7 @@
               'type': R.equals('native')
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           } else {
             assert.fail('Couldn\'t get Commands node.');
           }
@@ -349,7 +350,7 @@
               'type': R.equals('native')
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           } else {
             assert.fail('Couldn\'t get Commands node.');
           }
@@ -383,7 +384,7 @@
               'filter': R.equals('beta')
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           } else {
             assert.fail('Couldn\'t get Commands node.');
           }
@@ -418,7 +419,7 @@
             'filter': R.equals('beta')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -456,7 +457,7 @@
             'theme': R.equals('concept')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -489,7 +490,7 @@
             'filter': R.equals('leaf-filter')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -527,7 +528,7 @@
             'theme': R.equals('concept')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -565,7 +566,7 @@
             'theme': R.equals('concept')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -600,7 +601,7 @@
             'mode': R.equals('auto')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Commands node.');
         }
@@ -715,7 +716,7 @@
               '_children': R.is(Array)
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           });
 
           it('should: return a command object where no of children is 4', () => {
@@ -775,7 +776,7 @@
               '_children': R.is(Array)
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           });
 
           it('should: return a command object where no of children is 3', () => {
@@ -835,7 +836,7 @@
               '_children': R.is(Array)
             })(command), command);
 
-            expect(result).to.be.true();
+            expect(result).to.be.true(functify(command));
           });
 
           it('return a command object with all 3 children attached', () => {
@@ -876,7 +877,7 @@
             'name': R.equals('meta-prefix-expression')
           })(command), command);
 
-          expect(result).to.be.true();
+          expect(result).to.be.true(functify(command));
         } else {
           assert.fail('Couldn\'t get Expressions node.');
         }
@@ -1185,6 +1186,444 @@
       });
     });
   });
+
+  const testSpec = Object.freeze({
+    name: 'test-spec-with-attributes',
+    labels: {
+      element: '_',
+      descendants: '_children',
+      text: '_text'
+    },
+    coercion: {
+      attributes: {
+        trim: true,
+        matchers: {
+          primitives: ['number', 'boolean'],
+          collection: {
+            delim: ',',
+            open: '!<type>[',
+            close: ']',
+            assoc: {
+              delim: '=',
+              keyType: 'string',
+              valueType: 'string'
+            }
+          },
+          date: {
+            format: 'YYYY-MM-DD'
+          },
+          symbol: {
+            prefix: '$',
+            global: true
+          },
+          string: true
+        }
+      }
+    }
+  });
+
+  describe('convert.impl for "attributes" context [transforms]', () => {
+    const tests = [
+      // ['number]
+      {
+        given: 'spec with "attributes/matchers/primitives" = number',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['number'])(testSpec);
+        },
+        valueType: 'number',
+        raw: 42,
+        expected: 42
+      },
+      // ['boolean']
+      {
+        given: 'spec with "attributes/matchers/primitives" = boolean, value=true',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['boolean'])(testSpec);
+        },
+        valueType: 'boolean',
+        raw: true,
+        expected: true
+      },
+      {
+        given: 'spec with "attributes/matchers/primitives" = boolean, value=false',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['boolean'])(testSpec);
+        },
+        valueType: 'boolean',
+        raw: false,
+        expected: false
+      },
+      {
+        given: 'spec with "attributes/matchers/primitives" = boolean, value(string)="true"',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['boolean'])(testSpec);
+        },
+        valueType: 'boolean',
+        raw: 'true',
+        expected: true
+      },
+      {
+        given: 'spec with "attributes/matchers/primitives" = boolean, value(string)="false"',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers', 'primitives']),
+            ['boolean'])(testSpec);
+        },
+        valueType: 'boolean',
+        raw: 'false',
+        expected: false
+      },
+      // ['string']
+      {
+        given: 'spec with "attributes/matchers" = string(true)',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers']), {
+            string: true
+          })(testSpec);
+        },
+        valueType: 'string',
+        raw: 'foo',
+        expected: 'foo'
+      },
+      {
+        given: 'spec without a final string matcher and unhandled string value',
+        context: 'attributes',
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'attributes', 'matchers']), {
+            primitives: ['number', 'boolean'],
+            date: {
+              format: 'YYYY-MM-DD'
+            }
+          })(testSpec);
+        },
+        valueType: 'string',
+        raw: 'foo',
+        expected: 'foo'
+      }
+    ];
+
+    tests.forEach((t) => {
+      context(`given: ${t.given}`, () => {
+        it(`should: coerce "${t.valueType}" value ok`, () => {
+          try {
+            const result = Impl.getMatcher(t.valueType)(t.raw, t.context, t.spec());
+            expect(result.succeeded).to.be.true(`succeeded RESULT: ${result.succeeded}`);
+            expect(result.value).to.equal(t.expected);
+          } catch (error) {
+            assert.fail(`transform function for type: "${t.valueType}" failed. (${error})`);
+          }
+        });
+      });
+    });
+
+    context('given: spec with "attributes/matchers/primitives" = date', () => {
+      it('should: coerce "date" value ok:', () => {
+        try {
+          const dateValue = '2016-06-23';
+          const result = Impl.getMatcher('date')(dateValue, 'attributes', testSpec);
+          expect(result.succeeded).to.be.true(`succeeded RESULT: ${result.succeeded}`);
+          expect(result.value.format('YYYY-MM-DD')).to.equal('2016-06-23');
+        } catch (error) {
+          assert.fail(`transform function for type: "date" failed. (${error})`);
+        }
+      });
+    });
+
+    context('given: spec with "attributes/matchers/primitives" = symbol', () => {
+      it('should coerce "symbol" value ok:', () => {
+        try {
+          const symbolValue = '$excalibur';
+          const symbolExpected = Symbol(symbolValue);
+          const result = Impl.getMatcher('symbol')(symbolValue, 'attributes', testSpec);
+          expect(result.succeeded).to.be.true(`succeeded RESULT: ${result.succeeded}`);
+          expect(R.is(Symbol)(result.value)).to.be.true();
+          expect(result.value.toString()).to.equal(symbolExpected.toString());
+        } catch (error) {
+          assert.fail(`transform function for type: "symbol" failed. (${error})`);
+        }
+      });
+    });
+
+    context('given: spec with "attributes/matchers" = string(false)', () => {
+      it('should: throw', () => {
+        try {
+          const spec = R.set(R.lensPath(['coercion', 'attributes', 'matchers']), {
+            string: false
+          })(testSpec);
+
+          expect(() => {
+            Impl.getMatcher('string')('foo', 'attributes', spec);
+          }).to.throw();
+        } catch (error) {
+          assert.fail(`transform function for type: "string" failed. (${error})`);
+        }
+      });
+    });
+  }); // convert.impl [transforms]
+
+  describe('convert.impl for "attributes" context [transformCollection]', () => {
+    const transformCollection = Impl.getMatcher('collection');
+    context(`given: a compound value`, () => {
+      // []
+      it(`transformCollection (using default spec) should: coerce as a single item array`, () => {
+        const result = transformCollection('!<[]>[foo]', 'attributes', testSpec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value).to.deep.equal(['foo'], functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item string array`, () => {
+        const result = transformCollection('!<[]>[foo,bar,baz]', 'attributes', testSpec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value).to.deep.equal(['foo', 'bar', 'baz'], functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item numeric array`, () => {
+        const result = transformCollection('!<[]>[1,2,3,4]', 'attributes', testSpec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value).to.deep.equal([1, 2, 3, 4], functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item boolean array`, () => {
+        const result = transformCollection('!<[]>[true,false,true,false]', 'attributes', testSpec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value).to.deep.equal([true, false, true, false], functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item mix-type array`, () => {
+        const result = transformCollection('!<[]>[one,42,true,foo]', 'attributes', testSpec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value).to.deep.equal(['one', 42, true, 'foo'], functify(result));
+      });
+      // [TypedArrays]
+      it(`transformCollection (using default spec) should: coerce as a multiple item Int8Array array`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'open']),
+          '!<type>['
+        )(testSpec);
+
+        const result = transformCollection('!<Int8Array>[1,2,3,4]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value).to.deep.equal(Int8Array.from([1, 2, 3, 4]), functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Uint8Array array`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'open']),
+          '!<type>['
+        )(testSpec);
+
+        const result = transformCollection('!<Uint8Array>[1,2,3,4]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value).to.deep.equal(Uint8Array.from([1, 2, 3, 4]), functify(result));
+      });
+      // [Set]
+      it(`transformCollection (using default spec) should: coerce as a multiple item Set`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'open']),
+          '!<type>['
+        )(testSpec);
+
+        const result = transformCollection('!<Set>[1,2,3,4]', 'attributes', spec);
+        const expectedSet = new Set([1, 2, 3, 4]);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value.size).to.be.equal(expectedSet.size);
+      });
+      // [Map]
+      it(`transformCollection (using default spec) should: coerce as a single item map`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            keyType: 'string',
+            valueType: 'string'
+          }
+        )(testSpec);
+
+        const result = transformCollection('!<Map>[foo=bar]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value.size).to.equal(1, functify(result));
+        expect(result.value.get('foo')).to.equal('bar', functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item map`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            keyType: 'string',
+            valueType: 'string'
+          }
+        )(testSpec);
+
+        const result = transformCollection('!<Map>[a=one,b=two,c=three]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(result.value.size).to.equal(3, functify(result));
+        expect(result.value.get('a')).to.equal('one', functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Object`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            keyType: 'string',
+            valueType: 'string'
+          })(testSpec);
+
+        const result = transformCollection('!<Object>[a=one,b=two,c=three]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(R.keys(result.value).length).to.equal(3, functify(result));
+        expect(result.value['a']).to.equal('one', functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Object and numeric keys`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            keyType: 'number',
+            valueType: 'string'
+          })(testSpec);
+
+        const result = transformCollection('!<Object>[1=one,2=two,3=three]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(R.keys(result.value).length).to.equal(3, functify(result));
+        expect(result.value[1]).to.equal('one', functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Object and numeric keys and values`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            keyType: ['number'],
+            valueType: ['number']
+          })(testSpec);
+
+        const result = transformCollection('!<Object>[1=15,2=30,3=40]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(R.keys(result.value).length).to.equal(3, functify(result));
+        expect(result.value[1]).to.equal(15, functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Object mixed type numeric keys and values`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
+            delim: '=',
+            keyType: ['number', 'string'],
+            valueType: ['number', 'string']
+          })(testSpec);
+
+        const result = transformCollection('!<Object>[1=15,2=30,3=40,4=g,deuce=adv]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(R.keys(result.value).length).to.equal(5, functify(result));
+        expect(result.value[1]).to.equal(15, functify(result));
+        expect(result.value[4]).to.equal('g', functify(result));
+        expect(result.value['deuce']).to.equal('adv', functify(result));
+      });
+    });
+
+    context('given: invalid assoc.keyType', () => {
+      it(`should: throw`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
+            delim: '=',
+            keyType: 'duff',
+            valueType: ['number', 'string']
+          })(testSpec);
+
+        expect(() => {
+          transformCollection('!<Object>[1=15,2=30,3=40,4=g,deuce=adv]', 'attributes', spec);
+        }).to.throw();
+      });
+    });
+
+    context('given: invalid "collection" assoc.keyType', () => {
+      it(`should: throw`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
+            delim: '=',
+            keyType: 'collection',
+            valueType: ['number', 'string']
+          })(testSpec);
+
+        expect(() => {
+          transformCollection('!<Object>[1=15,2=30,3=40,4=g,deuce=adv]', 'attributes', spec);
+        }).to.throw();
+      });
+    });
+
+    context('given: invalid assoc.valueType', () => {
+      it(`should: throw`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
+            delim: '=',
+            keyType: 'string',
+            valueType: ['duff', 'number', 'string']
+          })(testSpec);
+
+        expect(() => {
+          transformCollection('!<Object>[1=15,2=30,3=40,4=g,deuce=adv]', 'attributes', spec);
+        }).to.throw();
+      });
+    });
+  }); // convert.impl for "attributes" context [transformCollection]
+
+  describe('convert.impl for "textNodes" context [transforms]', () => {
+    context('given: invalid request for a property not applicable in "textNodes" context', () => {
+      it('should: throw', () => [
+        expect(() => {
+          Impl.fetchCoercionOption('coercion/textNodes/matchers/collection/delim', testSpec);
+        }).to.throw()
+      ]);
+    });
+
+    const tests = [
+      {
+        should: 'textNodes.trim defined as "false" overriding attributes.trim',
+        context: 'textNodes',
+        path: 'coercion/textNodes/trim',
+        expectedValue: false,
+        spec: () => {
+          return R.set(R.lensPath(['coercion', 'textNodes']),
+            {
+              trim: false
+            }
+          )(testSpec);
+        }
+      }
+    ];
+
+    tests.forEach((t) => {
+      it(`should: ${t.should}`, () => {
+        const result = Impl.fetchCoercionOption(t.path, t.spec());
+        expect(result).to.be.equal(t.expectedValue);
+      });
+    });
+  }); // convert.impl for "textNodes" context [transforms]
 })();
 
 /* eslint-disable no-useless-escape */

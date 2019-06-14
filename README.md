@@ -552,4 +552,6 @@ jaxine.buildElement( ..., getOptions);
 
 ```
 
+#### NB: The *spec* has been significantly updated to support type coercion, more documentation coming ...
+
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)

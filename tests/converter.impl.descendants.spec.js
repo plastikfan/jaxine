@@ -37,19 +37,16 @@
     };
   };
 
-  const indexBySpec = {
+  const testSpec = {
     labels: {
       element: '_',
       descendants: '_children',
       text: '_text'
     }
   };
-  Object.freeze(indexBySpec);
+  Object.freeze(testSpec);
 
-  const groupBySpec = R.set(R.lensPath(['descendants', 'by']), 'group')(indexBySpec);
-  Object.freeze(groupBySpec);
-
-  const descendantsProp = R.prop(indexBySpec.labels.descendants);
+  const descendantsProp = R.prop(testSpec.labels.descendants);
 
   describe('converter.impl:buildElement (descendants)', () => {
     context('index/group descendants by', () => {
@@ -77,7 +74,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
-                indexBySpec, getTestOptions);
+                testSpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('object').that.has.all.keys(
@@ -116,7 +113,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
-                indexBySpec, getTestOptions);
+                testSpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('array');
@@ -151,7 +148,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
-                indexBySpec, getTestOptions);
+                testSpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('array');
@@ -187,7 +184,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
-                indexBySpec, getTestOptions);
+                testSpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('object').that.has.all.keys(
@@ -234,7 +231,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
-                indexBySpec, getTestOptions);
+                testSpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('object').that.has.all.keys('director');
@@ -282,7 +279,7 @@
             if (argumentsNode) {
               expect(() => {
                 Impl.buildElementWithSpec(argumentsNode, commandNode,
-                  indexBySpec, getTestOptionsThrows);
+                  testSpec, getTestOptionsThrows);
               }).to.throw();
             } else {
               assert.fail('Couldn\'t get Arguments node.');
@@ -315,7 +312,7 @@
             if (argumentsNode) {
               expect(() => {
                 Impl.buildElementWithSpec(argumentsNode, commandNode,
-                  indexBySpec, getTestOptionsThrows);
+                  testSpec, getTestOptionsThrows);
               }).to.throw();
             } else {
               assert.fail('Couldn\'t get Arguments node.');
@@ -347,7 +344,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(argumentsNode, commandNode,
-                groupBySpec, (el) => {
+                testSpec, (el) => {
                   return {
                     id: 'name',
                     recurse: 'inherits',
@@ -400,7 +397,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(
-                argumentsNode, commandNode, groupBySpec, getTestOptions);
+                argumentsNode, commandNode, testSpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('array');
@@ -440,7 +437,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(
-                argumentsNode, commandNode, groupBySpec, getTestOptions);
+                argumentsNode, commandNode, testSpec, getTestOptions);
               const children = descendantsProp(argumentsElement);
 
               expect(children).to.be.an('array');
@@ -481,7 +478,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(
-                argumentsNode, commandNode, groupBySpec, (el) => {
+                argumentsNode, commandNode, testSpec, (el) => {
                   return {
                     id: 'name',
                     recurse: 'inherits',
@@ -550,7 +547,7 @@
 
             if (argumentsNode) {
               const argumentsElement = Impl.buildElementWithSpec(
-                argumentsNode, commandNode, groupBySpec, (el) => {
+                argumentsNode, commandNode, testSpec, (el) => {
                   return {
                     id: 'name',
                     recurse: 'inherits',
@@ -607,7 +604,7 @@
             const argumentsNode = XHelpers.selectFirst('.//Arguments', commandsNode);
 
             const groupBySpecThrows = R.set(R.lensPath(['descendants', 'throwIfMissing']),
-              true)(groupBySpec);
+              true)(testSpec);
 
             if (argumentsNode) {
               expect(() => {
