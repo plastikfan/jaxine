@@ -1205,6 +1205,7 @@
             close: ']',
             assoc: {
               delim: '=',
+              keyType: 'string',
               valueType: 'string'
             }
           },
@@ -1370,8 +1371,8 @@
   }); // convert.impl [transforms]
 
   describe('convert.impl for "attributes" context [transformCollection]', () => {
+    const transformCollection = Impl.getMatcher('collection');
     context(`given: a compound value`, () => {
-      const transformCollection = Impl.getMatcher('collection');
       // []
       it(`transformCollection (using default spec) should: coerce as a single item array`, () => {
         const result = transformCollection('!<[]>[foo]', 'attributes', testSpec);
@@ -1450,6 +1451,7 @@
           R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
           {
             delim: '=',
+            keyType: 'string',
             valueType: 'string'
           }
         )(testSpec);
@@ -1466,6 +1468,7 @@
           R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
           {
             delim: '=',
+            keyType: 'string',
             valueType: 'string'
           }
         )(testSpec);
@@ -1482,6 +1485,7 @@
           R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
           {
             delim: '=',
+            keyType: 'string',
             valueType: 'string'
           })(testSpec);
 
@@ -1497,6 +1501,7 @@
           R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
           {
             delim: '=',
+            keyType: 'number',
             valueType: 'string'
           })(testSpec);
 
@@ -1512,7 +1517,8 @@
           R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
           {
             delim: '=',
-            valueType: ['number', 'string']
+            keyType: ['number'],
+            valueType: ['number']
           })(testSpec);
 
         const result = transformCollection('!<Object>[1=15,2=30,3=40]', 'attributes', spec);
@@ -1526,6 +1532,7 @@
         const spec = R.set(
           R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
             delim: '=',
+            keyType: ['number', 'string'],
             valueType: ['number', 'string']
           })(testSpec);
 
@@ -1536,6 +1543,51 @@
         expect(result.value[1]).to.equal(15, functify(result));
         expect(result.value[4]).to.equal('g', functify(result));
         expect(result.value['deuce']).to.equal('adv', functify(result));
+      });
+    });
+
+    context('given: invalid assoc.keyType', () => {
+      it(`should: throw`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
+            delim: '=',
+            keyType: 'duff',
+            valueType: ['number', 'string']
+          })(testSpec);
+
+        expect(() => {
+          transformCollection('!<Object>[1=15,2=30,3=40,4=g,deuce=adv]', 'attributes', spec);
+        }).to.throw();
+      });
+    });
+
+    context('given: invalid "collection" assoc.keyType', () => {
+      it(`should: throw`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
+            delim: '=',
+            keyType: 'collection',
+            valueType: ['number', 'string']
+          })(testSpec);
+
+        expect(() => {
+          transformCollection('!<Object>[1=15,2=30,3=40,4=g,deuce=adv]', 'attributes', spec);
+        }).to.throw();
+      });
+    });
+
+    context('given: invalid assoc.valueType', () => {
+      it(`should: throw`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
+            delim: '=',
+            keyType: 'string',
+            valueType: ['duff', 'number', 'string']
+          })(testSpec);
+
+        expect(() => {
+          transformCollection('!<Object>[1=15,2=30,3=40,4=g,deuce=adv]', 'attributes', spec);
+        }).to.throw();
       });
     });
   }); // convert.impl for "attributes" context [transformCollection]
