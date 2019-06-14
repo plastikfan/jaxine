@@ -1205,7 +1205,7 @@
             close: ']',
             assoc: {
               delim: '=',
-              valuetype: 'string'
+              valueType: 'string'
             }
           },
           date: {
@@ -1409,8 +1409,11 @@
       });
       // [TypedArrays]
       it(`transformCollection (using default spec) should: coerce as a multiple item Int8Array array`, () => {
-        const spec = R.set(R.lensPath(
-          ['coercion', 'attributes', 'matchers', 'collection', 'open'])('!<type>['))(testSpec);
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'open']),
+          '!<type>['
+        )(testSpec);
+
         const result = transformCollection('!<Int8Array>[1,2,3,4]', 'attributes', spec);
 
         expect(result.succeeded).to.be.true(functify(result));
@@ -1418,8 +1421,11 @@
       });
 
       it(`transformCollection (using default spec) should: coerce as a multiple item Uint8Array array`, () => {
-        const spec = R.set(R.lensPath(
-          ['coercion', 'attributes', 'matchers', 'collection', 'open'])('!<type>['))(testSpec);
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'open']),
+          '!<type>['
+        )(testSpec);
+
         const result = transformCollection('!<Uint8Array>[1,2,3,4]', 'attributes', spec);
 
         expect(result.succeeded).to.be.true(functify(result));
@@ -1427,8 +1433,11 @@
       });
       // [Set]
       it(`transformCollection (using default spec) should: coerce as a multiple item Set`, () => {
-        const spec = R.set(R.lensPath(
-          ['coercion', 'attributes', 'matchers', 'collection', 'open'])('!<type>['))(testSpec);
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'open']),
+          '!<type>['
+        )(testSpec);
+
         const result = transformCollection('!<Set>[1,2,3,4]', 'attributes', spec);
         const expectedSet = new Set([1, 2, 3, 4]);
 
@@ -1437,11 +1446,13 @@
       });
       // [Map]
       it(`transformCollection (using default spec) should: coerce as a single item map`, () => {
-        const spec = R.set(R.lensPath(
-          ['coercion', 'attributes', 'matchers', 'collection', 'assoc'])({
-          delim: '=',
-          valuetype: 'string'
-        }))(testSpec);
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            valueType: 'string'
+          }
+        )(testSpec);
 
         const result = transformCollection('!<Map>[foo=bar]', 'attributes', spec);
 
@@ -1451,11 +1462,13 @@
       });
 
       it(`transformCollection (using default spec) should: coerce as a multiple item map`, () => {
-        const spec = R.set(R.lensPath(
-          ['coercion', 'attributes', 'matchers', 'collection', 'assoc'])({
-          delim: '=',
-          valuetype: 'string'
-        }))(testSpec);
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            valueType: 'string'
+          }
+        )(testSpec);
 
         const result = transformCollection('!<Map>[a=one,b=two,c=three]', 'attributes', spec);
 
@@ -1465,17 +1478,64 @@
       });
 
       it(`transformCollection (using default spec) should: coerce as a multiple item Object`, () => {
-        const spec = R.set(R.lensPath(
-          ['coercion', 'attributes', 'matchers', 'collection', 'assoc'])({
-          delim: '=',
-          valuetype: 'string'
-        }))(testSpec);
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            valueType: 'string'
+          })(testSpec);
 
         const result = transformCollection('!<Object>[a=one,b=two,c=three]', 'attributes', spec);
 
         expect(result.succeeded).to.be.true(functify(result));
         expect(R.keys(result.value).length).to.equal(3, functify(result));
         expect(result.value['a']).to.equal('one', functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Object and numeric keys`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            valueType: 'string'
+          })(testSpec);
+
+        const result = transformCollection('!<Object>[1=one,2=two,3=three]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(R.keys(result.value).length).to.equal(3, functify(result));
+        expect(result.value[1]).to.equal('one', functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Object and numeric keys and values`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']),
+          {
+            delim: '=',
+            valueType: ['number', 'string']
+          })(testSpec);
+
+        const result = transformCollection('!<Object>[1=15,2=30,3=40]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(R.keys(result.value).length).to.equal(3, functify(result));
+        expect(result.value[1]).to.equal(15, functify(result));
+      });
+
+      it(`transformCollection (using default spec) should: coerce as a multiple item Object mixed type numeric keys and values`, () => {
+        const spec = R.set(
+          R.lensPath(['coercion', 'attributes', 'matchers', 'collection', 'assoc']), {
+            delim: '=',
+            valueType: ['number', 'string']
+          })(testSpec);
+
+        const result = transformCollection('!<Object>[1=15,2=30,3=40,4=g,deuce=adv]', 'attributes', spec);
+
+        expect(result.succeeded).to.be.true(functify(result));
+        expect(R.keys(result.value).length).to.equal(5, functify(result));
+        expect(result.value[1]).to.equal(15, functify(result));
+        expect(result.value[4]).to.equal('g', functify(result));
+        expect(result.value['deuce']).to.equal('adv', functify(result));
       });
     });
   }); // convert.impl for "attributes" context [transformCollection]
