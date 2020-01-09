@@ -1,4 +1,7 @@
 # jaxine
+
+NOTE: This repo has been superceded by jaxom-ts and will soon be archved.
+
 Another XML to JSON converter but with additional attribute inheritance and element consolidation. Jaxine uses [xmldom](https://www.npmjs.com/package/xmldom) and [xpath](https://www.npmjs.com/package/xpath) as its primary dependencies in performing XML to JSON conversion. It also takes a slightly different approach to parsing XML in that it is selective in nature, reflecting how clients would use an xpath expression to selectively access certain portions of a document rather than processing the document as a whole.
 
 ## Install
