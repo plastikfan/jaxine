@@ -55,7 +55,7 @@
     "cz-conventional-changelog": "^2.1.0",
     "depcheck": "^0.8.1",
     "dirty-chai": "^2.0.1",
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "nyc": "^14.1.1",
     "precommit-hook": "^3.0.0",
     "raw-loader": "^3.0.0",
